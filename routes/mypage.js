@@ -70,7 +70,7 @@ router.post(`/edit/:emp_no`, catchErrors(async (req, res, next) => {
     }
 
     await employee.save();
-    res.render('index');
+    res.render('/');
 }));
 
 module.exports = router;

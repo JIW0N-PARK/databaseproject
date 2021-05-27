@@ -461,4 +461,21 @@ router.post('/finish', catchErrors(async (req, res) => {
   return res.send('true');
 }));
 
+
+router.get("/finish", catchErrors(async (req, res, next) => {
+  const end_state_projects = await Project.findAll({ where: { state: "종료" }});
+
+  var today = new Date();
+
+  const end_date_projects = await Project.findAll({ 
+    where: {
+      state: "진행중",
+      end_date: {
+        [Op.lte]: today
+      } 
+    }
+  });
+  res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
+}));
+
 module.exports = router;

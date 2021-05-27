@@ -235,22 +235,6 @@ router.get('/evaluation/:evaluation_item_no/delete', catchErrors(async (req, res
   res.render('management/evaluationTypeList', {});
 }));
 
-router.get("/projects/finish", catchErrors(async (req, res, next) => {
-  const end_state_projects = await Project.findAll({ where: { state: "종료" }});
-
-  var today = new Date();
-
-  const end_date_projects = await Project.findAll({ 
-    where: {
-      state: "진행중",
-      end_date: {
-        [Op.lte]: today
-      } 
-    }
-  });
-  res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
-}));
-
 router.post('/project/state/end/:project_no', catchErrors(async (req, res, next) => {
   const project = await Project.findOne({ where: { project_no: req.params.project_no }});
   project.state = "종료";

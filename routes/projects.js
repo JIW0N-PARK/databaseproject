@@ -168,12 +168,13 @@ router.get('/checkTask/:project_no', catchErrors(async (req, res) => {
 }));
 
 // addTask 페이지 응답 
-router.get('/addTask', catchErrors(async (req, res) => {
-  res.render('project/addTask', {});
+router.get('/addTask/:project_no', catchErrors(async (req, res) => {
+  res.render('project/addTask', { project_no: req.params.project_no });
 }));
 
 // 업무를 DB에 추가
 router.post('/addTask', catchErrors(async (req, res) => {
+  console.log('hihihihihihihihihhihihihihihihihihi');
   console.log(req.body);
   const title = req.body.title;
   const content = req.body.content;
@@ -200,7 +201,7 @@ router.post('/addTask', catchErrors(async (req, res) => {
 }));
 
 // 스킬셋이 HTML & JAVASCRIPT인 직원 리스트 응답
-router.get('/addTask/HJ', catchErrors(async (req, res) => {
+router.get('/addTask/all/HJ', catchErrors(async (req, res) => {
   // 직원 리스트 선언
   let empList = [];
   let empNoList = [];
@@ -212,7 +213,7 @@ router.get('/addTask/HJ', catchErrors(async (req, res) => {
       skill_no: [1, 2],
     }
   });
-  
+  console.log(empSKill);
   // 해당 스킬셋을 가진 직원들에 대해 모든 이름 값을 가져오기 위한 반복문
   for (let i=0; i<empSkill.length; i++) {
     // Employee 가져오기
@@ -234,8 +235,8 @@ router.get('/addTask/HJ', catchErrors(async (req, res) => {
   empNoList = [...set1];
   empNameList = [...set2];
 
-
   for (let i=0; i<empNoList.length; i++) {
+    console.log([empNoList[i], empNameList[i]]);
     empList.push([empNoList[i], empNameList[i]]);
   }
   // 최종 리스트 전달
@@ -243,7 +244,7 @@ router.get('/addTask/HJ', catchErrors(async (req, res) => {
 }));
 
 // 스킬셋이 C# & C/C++인 직원 리스트 응답
-router.get('/addTask/CCC', catchErrors(async (req, res) => {
+router.get('/addTask/all/CCC', catchErrors(async (req, res) => {
   // 직원 리스트 선언
   let empList = [];
   let empNoList = [];
@@ -286,7 +287,7 @@ router.get('/addTask/CCC', catchErrors(async (req, res) => {
 }));
 
 // 스킬셋이 Dart/Flutter & Java 인 직원 리스트 응답
-router.get('/addTask/DFJ', catchErrors(async (req, res) => {
+router.get('/addTask/all/DFJ', catchErrors(async (req, res) => {
   // 직원 리스트 선언
   let empList = [];
   let empNoList = [];
@@ -329,7 +330,7 @@ router.get('/addTask/DFJ', catchErrors(async (req, res) => {
 }));
 
 // 스킬셋이 Python 인 직원 리스트 응답
-router.get('/addTask/Python', catchErrors(async (req, res) => {
+router.get('/addTask/all/Python', catchErrors(async (req, res) => {
   // 직원 리스트 선언
   let empList = [];
   let empNoList = [];

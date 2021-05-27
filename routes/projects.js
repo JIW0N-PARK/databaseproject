@@ -9,25 +9,43 @@ var Task = require('../models/task');
 const catchErrors = require('../lib/async-error');
 var router = express.Router();
 
-router.get('/list', catchErrors(async (req, res, next) => {
-  const projects = await Project.findAll({
-    include: [
-      {    
-        model: Employee,
-        as: 'project_emp',
-        through: {
-          where: { emp_no: req.session.user.emp_no }
-        }
-      }
-    ]
-  });
-  res.render('project/list', { projects });
+
+// 사용자가 project List를 조회할 때 요청
+router.get('/', catchErrors(async (req, res) => {
+  // 경영진의 권한을 가진 이에게는 모든 project에 대한 리스트를 줌
+  if(req.session.authorization == 1) {
+    const projects = await Project.findAll({});
+    return res.render('project/list', { projects });
+  }
+  
+  // 일반 권한을 가진 직원에게는 참여하고 있는 project에 대한 리스트만 줌
+  else {
+    let projects = [];
+    const participations = await Participation.findAll({
+      where: {
+        emp_no: req.session.user.emp_no,
+      },
+    });
+
+    for(let i=0; i<participations.length; i++) {
+      const project = await Project.findOne({
+        where: {
+          project_no: participations[i].project_no,
+        },
+      });
+      projects.push(project);
+    }
+    return res.render('project/list', { projects });
+  }
 }));
 
+// 경영진 권한에게 프로젝트 페이지를 보여줌.
 router.get('/index', catchErrors(async (req, res, next) => {
   res.render('project/index');
 }));
 
+
+// 프로젝트 자세히 보기
 router.get('/:project_no', catchErrors(async (req, res, next) => {
   const project = await Project.findOne({
     where: { project_no: req.params.project_no },
@@ -41,13 +59,46 @@ router.get('/:project_no', catchErrors(async (req, res, next) => {
       }
     ]
   });
-  console.log(project);
   res.render('project/details', { project: project });
 }));
 
+// 간트차트 태스크 데이터 가져오는 요청 처리
+router.get('/getTasks/:project_no', catchErrors(async (req, res) => {
+  let resultList = [];
+
+  // 모든 태스크 가져옴
+  const tasks = await Task.findAll({
+    where: {
+      project_no: req.params.project_no,
+    },
+  });
+
+  for(let i=0; i<tasks.length; i++) {
+    // rowList 생성
+    let rowList = [];
+    // id, title, submitFile, start_date, end_date, null, 100, null
+    
+    rowList.push(String(tasks[i].id));
+    rowList.push(tasks[i].title);
+    rowList.push(tasks[i].submit_file);
+    rowList.push(new Date(tasks[i].start_date));
+    rowList.push(new Date(tasks[i].end_date));
+    rowList.push(null);
+    if(tasks[i].current_state == 'uncheck') rowList.push(0);
+    else if(tasks[i].current_state == 'progress') rowList.push(25); 
+    else if(tasks[i].current_state == 'verify') rowList.push(90);
+    else if(tasks[i].current_state == 'end') rowList.push(100);
+    rowList.push(null);
+
+    // resultList에 rowList 추가
+    resultList.push(rowList);
+  }
+
+  return res.send(resultList);
+}));
 
 // 업무 진척도 조회 페이지
-router.get('/tasks/:project_no/:emp_no', catchErrors(async (req, res) => {
+router.get('/checkTask/:project_no', catchErrors(async (req, res) => {
   var projectPercent = 0;
   var employeePercent = 0;
   var employee;
@@ -69,7 +120,7 @@ router.get('/tasks/:project_no/:emp_no', catchErrors(async (req, res) => {
   const empTasks = await Task.findAll({
     where: {
         project_no: req.params.project_no,
-        emp_no: req.params.emp_no,            
+        emp_no: req.session.user.emp_no,            
     }
   });
 
@@ -77,7 +128,7 @@ router.get('/tasks/:project_no/:emp_no', catchErrors(async (req, res) => {
   const empEndTasks = await Task.findAll({
       where: {
           project_no: req.params.project_no,
-          emp_no: req.params.emp_no,
+          emp_no: req.session.user.emp_no,
           current_state: 'end',
       }
   });
@@ -86,7 +137,7 @@ router.get('/tasks/:project_no/:emp_no', catchErrors(async (req, res) => {
   const verifyTask = await Task.findAll({
       where: {
           project_no: req.params.project_no,
-          emp_no: req.params.emp_no,
+          emp_no: req.session.user.emp_no,
           current_state: 'verify',
       }
   });
@@ -95,7 +146,7 @@ router.get('/tasks/:project_no/:emp_no', catchErrors(async (req, res) => {
   const progressTask = await Task.findAll({
       where: {
           project_no: req.params.project_no,
-          emp_no: req.params.emp_no,
+          emp_no: req.session.user.emp_no,
           current_state: 'progress',
       }
   });
@@ -104,19 +155,13 @@ router.get('/tasks/:project_no/:emp_no', catchErrors(async (req, res) => {
   const uncheckTask = await Task.findAll({
       where: {
           project_no: req.params.project_no,
-          emp_no: req.params.emp_no,
+          emp_no: req.session.user.emp_no,
           current_state: 'uncheck',
       }
   });
 
   projectPercent = String(Math.round(endTasks.length / tasks.length * 100));
   employeePercent = String(Math.round(empEndTasks.length / empTasks.length * 100));
-
-  // employeeTaskList.push(Math.round(endTasks.length / tasks.length * 100));
-  // employeeTaskList.push(endTasks.length);
-  // employeeTaskList.push(verifyTask.length);
-  // employeeTaskList.push(progressTask.length);
-  // employeeTaskList.push(uncheckTask.length);
 
   res.render('project/checkTask', { projectPercent, employeePercent });
 }));
@@ -415,4 +460,5 @@ router.post('/finish', catchErrors(async (req, res) => {
 
   return res.send('true');
 }));
+
 module.exports = router;

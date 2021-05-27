@@ -6,12 +6,11 @@ block content
     form(action="#", method="post")
       h1.text-center-mt-5 Project Details
 
-
       div.card-group 
         .card
           .card-body 
             h4 프로젝트명
-            p.name= project.project_name
+            p.name(id="project" value=`${project.project_no}`)= project.project_name
             h4 프로젝트 설명
             p.details= project.description
             h4 프로젝트 담당자
@@ -32,3 +31,6 @@ block content
               a.btn.btn-outline-dark(href=`/management/proejct/${project.project_no}/edit`) 프로젝트 수정</a>
               a.btn.btn-outline-dark(href=`/management/project/${project.project_no}/delete`) 프로젝트 삭제</a>
             <a href="list" class="btn btn-outline-dark">List로 돌아가기</a>
+            
+      script(src='https://unpkg.com/axios/dist/axios.min.js')
+      script(src='/gantt.js')

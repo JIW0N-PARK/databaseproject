@@ -30,7 +30,7 @@ block content
                 h3 프로젝트 담당자(PM)
                 select.form-control(name="PM", size="1")
                     each employee in employees
-                        option(value=`${customer.customer_id}`)= customer.customer_name
+                        option(value=`${employee.emp_no}`)= employee.name
             .row.align-items-center.mt-4
                 .col
                 h3 프로젝트 상세설명

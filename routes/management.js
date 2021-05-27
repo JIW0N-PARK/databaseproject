@@ -38,8 +38,10 @@ router.get('/project/register', catchErrors(async (req, res, next) => {
   const research = await Employee.findAll({ where: { dept_no: 2 } });
   const business = await Employee.findAll({ where: { dept_no: 3 } });
   const development = await Employee.findAll({ where: { dept_no: 4 } });
+  const employees = await Employee.findAll({ where: { authorization_no: 1 } });
   res.render('management/registerProject', { 
-    customers: customers, marketing: marketing, research: research, business: business, development: development });
+    customers: customers, marketing: marketing, 
+    research: research, business: business, development: development, employees: employees });
 }));
 
 router.post('/project/register', catchErrors(async (req, res, next) => {

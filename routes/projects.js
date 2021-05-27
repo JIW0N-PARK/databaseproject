@@ -7,7 +7,6 @@ var EmpSkill = require('../models/emp_skill');
 var Task = require('../models/task');
 
 const catchErrors = require('../lib/async-error');
-const { rawAttributes } = require('../models/customer');
 var router = express.Router();
 
 router.get('/list', catchErrors(async (req, res, next) => {

@@ -1,6 +1,11 @@
 a {
   color: #00B7FF;
 }
+
+.card#indexCard {
+  z-index: -1;
+}
+
 img.card-img{
   margin: auto;
   width: 80%;

@@ -42,8 +42,8 @@ block content
                 p.end_date= project.end_date
                 h6 상태
                 p.state= project.state
-                h6 담당자
-                p.PM PM 이름
+                h6 담당자(사번)
+                p.PM= project.pm_no
                 button.btn.btn-outline-danger(type="submit" style="float: right" id="finish") 종료하기
     else 
       .card-group

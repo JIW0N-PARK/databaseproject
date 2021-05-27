@@ -463,11 +463,11 @@ router.post('/finish', catchErrors(async (req, res) => {
 
 
 router.get("/finish", catchErrors(async (req, res, next) => {
-  const end_state_projects = Project.findAll({ where: { state: "종료" }});
+  const end_state_projects = await Project.findAll({ where: { state: "종료" }});
 
   var today = new Date();
 
-  const end_date_projects = Project.findAll({ 
+  const end_date_projects = await Project.findAll({ 
     where: {
       state: "진행중",
       end_date: {

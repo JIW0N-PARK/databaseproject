@@ -55,7 +55,8 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
     end_date: req.body.end,
     state: req.body.state,
     description: req.body.description,
-    customer_id: req.body.customer
+    customer_id: req.body.customer,
+    pm_no: req.body.pm
   });
 
   for(let employee of req.body.employee) {

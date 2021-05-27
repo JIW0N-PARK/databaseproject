@@ -6,7 +6,6 @@ block content
     h1.text-center-mt-5 프로젝트 목록
 
     if(projects)
-    
       each project in projects
         if(project.project_emp[0])
           .card-group
@@ -18,9 +17,9 @@ block content
               p.state= project.state
               .d-grid.gap-2.mt-2
                 a.btn.btn-outline-warning(href=`/projects/${project.project_no}`) 자세히
-                a.btn.btn-outline-warning(href=`/projects/checkTask`) 진행 사항
+                a.btn.btn-outline-success(href=`/projects/checkTask`) 진행 사항
                 if(authorization == 1)
-                  a.btn.btn-outline-warning(href=`/projects/addTask`) 직원별 업무 부여하기
+                  a.btn.btn-outline-primary(href=`/projects/addTask`) 직원별 업무 부여하기
         else 
           .card-group
             .card 

@@ -95,7 +95,6 @@ router.route("/signin")
 
     .post(
         catchErrors(async (req, res, next) => {
-            console.log(req.body);
 
             const user = await Employee.findOne({ where: { ID: req.body.id } });
             if (!user) {

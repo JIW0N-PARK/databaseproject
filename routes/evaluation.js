@@ -79,7 +79,7 @@ router.get('/employee_list/:project_no', catchErrors(async (req, res) => {
     res.send(employee_list);
 }));
 
-// 모든 프로젝트의 직원들에 대한 평가 리스트를 
+// 모든 프로젝트의 직원들에 대한 평가 결과  리스트를 
 router.get('/result/all', catchErrors(async (req, res) => {
     var allEvaluationList = [];
     //모든 프로젝트에 참여자

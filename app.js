@@ -87,7 +87,7 @@ app.use('/pm_evaluation', pmEvaluationRouter);
 app.use('/evaluation', evaluationRouter);
 app.use('/management', managementRouter);
 app.use('/task', taskRouter);
-app.use('/mypage', mypageRouter);
+// app.use('/mypage', mypageRouter);
 app.use('/eval', evalRouter);
 app.use('/employee', employeeRouter);
 

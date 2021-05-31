@@ -1,0 +1,69 @@
+extends ../layout
+
+//-마이페이지//
+
+block content
+	.container.tableStyle
+		br
+		br
+		br
+		.mypageView
+			.row
+				.col
+					h4 마이페이지
+			br
+			.row
+				.col
+					h5 이름
+				.col
+					p.fs-4
+						strong= employee.name
+			.row
+				.col
+					h5 사번
+				.col
+					p.fs-4
+						strong= employee.emp_no
+			.row
+				.col
+					h5 ID
+				.col
+					p.fs-4
+						strong= employee.ID
+			.row
+				.col
+					h5 부서
+				.col
+					p.fs-4
+						strong= employee.Department.dept_name
+			.row
+				.col
+					h5 최종 학력
+				.col
+					p.fs-4
+						strong= employee.education
+			.row
+				.col
+					h5 Skills
+				.col
+					each skill in employee.emp_skill 
+						p.fs-4
+							strong= skill.skill_name
+			.row
+				.col
+					h5 권한
+				.col
+					if(employee.authorization_no == 0)
+						p.fs-4
+							strong 일반 권한
+					else
+						p.fs-4
+							strong 경영진 권한
+					
+			
+			.row
+				.col-12.col-sm-12.pt-3.pt-sm-0
+						button.loginButton(type='button' onclick="location.href='/mypage/edit' ") 수정
+			br
+                            
+

@@ -19,7 +19,11 @@ block content
                 a.btn.btn-outline-warning(href=`/projects/${project.project_no}`) 자세히
                 a.btn.btn-outline-success(href=`/projects/checkTask/${project.project_no}`) 진행 사항
                 if(authorization == 1)
+<<<<<<< HEAD
                   a.btn.btn-outline-primary(href=`/projects/addTask`) 직원별 업무 부여하기
+=======
+                  a.btn.btn-outline-warning(href=`/projects/addTask/${project.project_no}`) 직원별 업무 부여하기
+>>>>>>> origin/jsh
         else 
           .card-group
             .card 

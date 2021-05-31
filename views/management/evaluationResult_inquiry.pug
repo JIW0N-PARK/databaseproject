@@ -2,40 +2,49 @@ extends ../layout
 
 //- 특정직원의 동료,pm,peer평가 결과(점수,합계,평균)를 확인하는 페이지
 block content
-    .container
-        .table-responsive
-            .table-wrapper
-                .table-title
-                    form(action="/", method="post")
-                        .row
-                            .col-sm-2
-                                select#researchOption.form-control
-                                    option.entire(value='all') 전체
-                                    option.employeeName(value='empName') 직원명
-                                    option.employeeNum(value='empNum') 직원번호
-                                    option.projectName(value='projectName') 프로젝트명
-                            .col-sm-2
-                                input#inputInformation.searchInput(type='information')
-                            .col-sm-1
-                                button#search.searchNav(type='button' value='inquiry' title='inquiry') 조회
-                            .col-sm-4
-                            .col-sm-3
-                                button#goodEmpAdd.selectButton(type='button' value='good_employee_add' title='good_employee_add') 우수직원선정
-                                button#goodEmpDelete.cancellButton(type='button' value='good_employee_delete' title='good_employee_delete') 우수직원취소
-                    br
-                table.table.table-bordered
-                    thead
-                        tr  
-                            th check
-                            th 직원명
-                            th 프로젝트명
-                            th 동료평가
-                            th PM평가
-                            th 고객평가
-                            th 총합
-                            th 평균
-                    tbody#tbody
-                                               
+	.container
+		.table-responsive
+			.table-wrapper
+				.table-title
+					form(action="/", method="post")
+						.row
+							.col-sm-2
+								select#researchOption.form-control
+									option.entire(value='all') 전체
+									option.employeeName(value='empName') 직원명
+									option.employeeNum(value='empNum') 직원번호
+									option.projectName(value='projectName') 프로젝트명
+							.col-sm-2
+								input#inputInformation.searchInput(type='information')
+							.col-sm-1
+								button#search.searchNav(type='button' value='inquiry' title='inquiry') 조회
+							.col-sm-4
+							.col-sm-3
+								button#goodEmpAdd.selectButton(type='button' value='good_employee_add' title='good_employee_add') 우수직원선정
+								button#goodEmpDelete.cancellButton(type='button' value='good_employee_delete' title='good_employee_delete') 우수직원취소
+					br
+				table.table.table-bordered
+					thead
+						tr  
+							th check
+							th 직원명
+							th 프로젝트명
+							th 동료평가
+							th PM평가
+							th 고객평가
+							th 총합
+							th 평균
+					tbody#tbody
+						tr
+							th
+								input(type='checkbox')
+							td 지원
+							td 테스트
+							td 100
+							td 100
+							td 100
+							td 300
+							td 100
 
-    script(src='https://unpkg.com/axios/dist/axios.min.js')
-    script(src="/evaluation_result.js")
+	//- script(src='https://unpkg.com/axios/dist/axios.min.js')
+	//- script(src="/evaluation_result.js")

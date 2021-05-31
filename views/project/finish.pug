@@ -3,9 +3,9 @@ extends ../layout
 //- 종료된 프로젝트 리스트
 block content
   .container 
-    h1.text-center-mt-5 종료된 프로젝트
+    h1.text-center.mt-5 종료된 프로젝트
 
-    if(end_state_projects)
+    if(end_state_projects[0])
       for project in end_state_projects
         form(action="#", method="post")
           .card-group
@@ -13,12 +13,12 @@ block content
               .card-body 
                 h5 프로젝트명
                 p.project_name= project.project_name
-                h6 프로젝트 종료 날짜
+                h5 프로젝트 종료 날짜
                 p.end_date= project.end_date
-                h6 상태
+                h5 상태
                 p.state= project.state
-                h6 담당자
-                p.PM PM 이름
+                h5 담당자
+                p.PM= project.pm_no
                 button.btn.btn-outline-dark(type="submit" style="float: right") 인증키 부여
     else 
       .card-group
@@ -27,10 +27,10 @@ block content
             h5 종료된 프로젝트가 없습니다.
 
 
-    hr(style="border-top:3px solid #F12121")
+    hr(style="border-top:3px solid #FFFFFF")
 
-    h2 마감일자가 지난 프로젝트
-    if(end_date_projects)
+    h1.text-center.mt-5 마감일자가 지난 프로젝트
+    if(end_date_projects[0])
       for project in end_date_projects
         form(action=`/management/project/state/end/${project.project_no}`, method="post")
           .card-group

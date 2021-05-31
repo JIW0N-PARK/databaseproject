@@ -34,10 +34,10 @@ router.post('/customer/register', catchErrors(async (req, res, next) => {
 
 router.get('/project/register', catchErrors(async (req, res, next) => {
   const customers = await Customer.findAll();
-  const marketing = await Employee.findAll({ where: { dept_no: 2 } });
-  const research = await Employee.findAll({ where: { dept_no: 3 } });
-  const business = await Employee.findAll({ where: { dept_no: 4 } });
-  const development = await Employee.findAll({ where: { dept_no: 5 } });
+  const marketing = await Employee.findAll({ where: { dept_no: 1 } });
+  const research = await Employee.findAll({ where: { dept_no: 2 } });
+  const business = await Employee.findAll({ where: { dept_no: 3 } });
+  const development = await Employee.findAll({ where: { dept_no: 4 } });
   const employees = await Employee.findAll({ where: { authorization_no: 1 } });
   res.render('management/registerProject', { 
     customers: customers, marketing: marketing, 
@@ -74,10 +74,10 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
 
 router.get('/project/edit/:project_no', catchErrors(async (req, res, next) => {
   const customers = await Customer.findAll();
-  const marketing = await Employee.findAll({ where: { dept_no: 2 } });
-  const research = await Employee.findAll({ where: { dept_no: 3 } });
-  const business = await Employee.findAll({ where: { dept_no: 4 } });
-  const development = await Employee.findAll({ where: { dept_no: 5 } });
+  const marketing = await Employee.findAll({ where: { dept_no: 1 } });
+  const research = await Employee.findAll({ where: { dept_no: 2 } });
+  const business = await Employee.findAll({ where: { dept_no: 3 } });
+  const development = await Employee.findAll({ where: { dept_no: 4 } });
   const project = await Project.findOne({
     where: { project_no: req.params.project_no },
     include: [

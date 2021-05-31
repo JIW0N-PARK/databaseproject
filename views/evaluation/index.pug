@@ -2,30 +2,30 @@ extends ../layout
 
 block content 
   .container 
-    h1.mb-5.d-flex.justify-content-center 평가
+    h1.mb-5.mt-5.d-flex.justify-content-center 평가
     .row.mb-5
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
             h5.card-title.mb-3 평가하기
-            h6.card-subtitle.mb-4.text-muted Register Evaluation Contents
+            h6.card-subtitle.mb-4.text-muted Evaluate
             p.card-text 평가 등록할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
               a.btn.btn-outline-success(href='/eval/list') 평가하기
       .col.d-flex.justify-content-center 
           .card(style="width: 18rem;")
             .card-body
-                h5.card-title.mb-3 평가항목 등록하기
-                h6.card-subtitle.mb-4.text-muted Register evaluation items
-                p.card-text 평가항목을 등록할 수 있는 페이지로 이동합니다.
+                h5.card-title.mb-3 평가항목 관리하기
+                h6.card-subtitle.mb-4.text-muted Manage Evaluation Items
+                p.card-text 평가항목을 관리/등록할 수 있는 페이지로 이동합니다.
                 .d-grid.gap-2.mt-5
-                  a.btn.btn-outline-success(href='/management/evaluation/list') 평가항목 등록하기
+                  a.btn.btn-outline-success(href='/eval/manage/item') 평가항목 관리하기
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
             h5.card-title.mb-3 평가 결과보기
-            h6.card-subtitle.mb-4.text-muted Finish Projects
+            h6.card-subtitle.mb-4.text-muted View Evaluations
             p.card-text 평가가 완료된 항목의 결과를 조회할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/project/finish') 평가 결과 확인하기
+              a.btn.btn-outline-success(href='/eval/result') 평가 결과 확인하기
       

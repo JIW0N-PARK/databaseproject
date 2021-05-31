@@ -1,4 +1,6 @@
 var express = require('express');
+var router = express.Router();
+const Sequelize = require('sequelize');
 var Participation = require('../models/participation');
 var Project = require('../models/project');
 var Customer = require('../models/customer');
@@ -7,8 +9,28 @@ var EmpSkill = require('../models/emp_skill');
 var Task = require('../models/task');
 
 const catchErrors = require('../lib/async-error');
-var router = express.Router();
+const Op = Sequelize.Op;
 
+// 경영진 권한에게 프로젝트 페이지를 보여줌.
+router.get('/index', catchErrors(async (req, res, next) => {
+  res.render('project/index');
+}));
+
+router.get("/finish", catchErrors(async (req, res, next) => {
+  const end_state_projects = await Project.findAll({ where: { state: "종료" }});
+
+  var today = new Date();
+
+  const end_date_projects = await Project.findAll({ 
+    where: {
+      state: "진행중",
+      end_date: {
+        [Op.lte]: today
+      } 
+    }
+  });
+  res.render('project/finish', { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
+}));
 
 // 사용자가 project List를 조회할 때 요청
 router.get('/', catchErrors(async (req, res) => {
@@ -41,12 +63,6 @@ router.get('/', catchErrors(async (req, res) => {
     return res.render('project/list', { projects: projects });
   }
 }));
-
-// 경영진 권한에게 프로젝트 페이지를 보여줌.
-router.get('/index', catchErrors(async (req, res, next) => {
-  res.render('project/index');
-}));
-
 
 // 프로젝트 자세히 보기
 router.get('/:project_no', catchErrors(async (req, res, next) => {
@@ -463,23 +479,6 @@ router.post('/finish', catchErrors(async (req, res) => {
   // 이메일 보내기
 
   return res.send('true');
-}));
-
-
-router.get("/finish", catchErrors(async (req, res, next) => {
-  const end_state_projects = await Project.findAll({ where: { state: "종료" }});
-
-  var today = new Date();
-
-  const end_date_projects = await Project.findAll({ 
-    where: {
-      state: "진행중",
-      end_date: {
-        [Op.lte]: today
-      } 
-    }
-  });
-  res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
 }));
 
 module.exports = router;

@@ -167,9 +167,6 @@ router.get('/result/all', catchErrors(async (req, res) => {
     res.send(allEvaluationList);
 }));
 
-
-
-
 router.get('/result/empName', catchErrors(async (req, res) => {
     var allEvaluationList = [];
     //모든 프로젝트에 참여자

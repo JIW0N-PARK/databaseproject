@@ -175,8 +175,6 @@ router.get("/signout", (req, res, next) => {
     res.redirect("/");
 });
 
-router.get("/test", function (req, res, next) {
-    res.render("index2", { title: "Express", name: "han sh" });
-});
+
 
 module.exports = router;

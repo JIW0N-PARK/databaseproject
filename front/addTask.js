@@ -1,5 +1,5 @@
 // 전역 변수
-var option = '문서';
+var option = '미선택';
 var emp_no = '미선택';
 var project_no = 1;
 
@@ -12,7 +12,6 @@ window.onload = function () {
         e.preventDefault();
         option = e.target.value;
         setEmpSelectorOption(option);
-        
     });
 
     // empSelect에 대한 이벤트 리스너 등록
@@ -21,10 +20,10 @@ window.onload = function () {
         emp_no = e.target.value;
     });
 
-
     // 업무 등록 버튼에 대한 이벤트 리스너 등록
-    document.getElementById('register').addEventListener('submit', async (e) => {
+    document.getElementById('addTaskForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+
         const title = e.target.title.value;
         const content = e.target.content.value;
         const start_date = e.target.start_date.value;
@@ -36,21 +35,23 @@ window.onload = function () {
         if(!content) {
             return alert('업무 내용을 입력해주세요.');
         }
-        if(!startDate) {
+        if(!start_date) {
             return alert('업무 시작 날짜를 입력해주세요.');
         }
-        if(!endDate) {
+        if(!end_date) {
             return alert('업무 마감 날짜를 입력해주세요.');
         }
-        if(option != null || option != '미선택') {
+        if(option == '미선택') {
+            alert(option);
             return alert('제출 파일 종류를 선택해주세요.');
         }
-        if(emp_no == '미선택' || !emp_no) {
+        if(emp_no == '미선택') {
+            alert(emp_no);
             return alert('업무를 수행할 직원을 선택해주세요.');
         }
 
         const result = await axios.post('/projects/addTask', { title, content, start_date, end_date, option, emp_no, project_no });
-        
+
         if(result.data == true) {
             alert('성공적으로 평가를 마쳤습니다!');
             window.location.replace('/');

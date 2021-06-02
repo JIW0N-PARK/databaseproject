@@ -5,6 +5,7 @@ var Customer = require('../models/customer');
 var Employee = require('../models/employee');
 var EmpSkill = require('../models/emp_skill');
 var Task = require('../models/task');
+e
 
 const catchErrors = require('../lib/async-error');
 var router = express.Router();
@@ -170,8 +171,6 @@ router.get('/addTask/:project_no', catchErrors(async (req, res) => {
 
 // 업무를 DB에 추가
 router.post('/addTask', catchErrors(async (req, res) => {
-  console.log('hihihihihihihihihhihihihihihihihihi');
-  console.log(req.body);
   const title = req.body.title;
   const content = req.body.content;
   const start_date = req.body.start_date;
@@ -189,6 +188,7 @@ router.post('/addTask', catchErrors(async (req, res) => {
     emp_no,
     project_no,
   });
+
   if(task != null) {
     return res.send('true');
   } else {
@@ -198,25 +198,26 @@ router.post('/addTask', catchErrors(async (req, res) => {
 
 // 스킬셋이 HTML & JAVASCRIPT인 직원 리스트 응답
 router.get('/addTask/all/HJ', catchErrors(async (req, res) => {
-  let empList = getEmployeesWithSkill([1, 2]);
+  let empList = await getEmployeesWithSkill([1, 2]);
+  console.log(empList);
   res.send(empList);
 }));
 
 // 스킬셋이 C# & C/C++인 직원 리스트 응답
 router.get('/addTask/all/CCC', catchErrors(async (req, res) => {
-  let empList = getEmployeesWithSkill([3, 4]);
+  let empList = await getEmployeesWithSkill([3, 4]);
   res.send(empList);
 }));
 
 // 스킬셋이 Dart/Flutter & Java 인 직원 리스트 응답
 router.get('/addTask/all/DFJ', catchErrors(async (req, res) => {
-  let empList = getEmployeesWithSkill([5, 6]);
+  let empList = await getEmployeesWithSkill([5, 6]);
   res.send(empList);
 }));
 
 // 스킬셋이 Python 인 직원 리스트 응답
 router.get('/addTask/all/Python', catchErrors(async (req, res) => {
-  let empList = getEmployeesWithSkill([7]);
+  let empList = await getEmployeesWithSkill([7]);
   res.send(empList);
 }));
 

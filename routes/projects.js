@@ -20,7 +20,7 @@ router.get('/list', catchErrors(async (req, res) => {
   // 경영진의 권한을 가진 이에게는 모든 project에 대한 리스트를 줌
   if(req.session.authorization == 1) {
     const projects = await Project.findAll({});
-    return res.render('project/list', { projects });
+    return res.render('project/list', { projects: projects });
   }
   
   // 일반 권한을 가진 직원에게는 참여하고 있는 project에 대한 리스트만 줌
@@ -40,7 +40,10 @@ router.get('/list', catchErrors(async (req, res) => {
       });
       projects.push(project);
     }
-    return res.render('project/list', { projects });
+
+    console.log(projects);
+
+    return res.render('project/list', { projects: projects });
   }
 }));
 

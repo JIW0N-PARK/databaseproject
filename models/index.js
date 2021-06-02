@@ -14,7 +14,7 @@ const Task = require('./task');
 const EvaluationItems = require('./evaluation_items');
 const EvaluationResult = require('./evaluation_result');
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'production';
 const config = require('../config/config.json')[env];
 const db = {};
 

@@ -33,15 +33,15 @@ router.post('/customer/register', catchErrors(async (req, res, next) => {
 }));
 
 router.get('/project/register', catchErrors(async (req, res, next) => {
-  const customers = await Customer.findAll({});
-  const employees = await Employee.findAll({ where: { authorization_no: 1 }});
-  const marketing = await Employee.findAll({ where: { dept_no: 1 } });
-  const research = await Employee.findAll({ where: { dept_no: 2 } });
-  const business = await Employee.findAll({ where: { dept_no: 3 } });
-  const development = await Employee.findAll({ where: { dept_no: 4 } });
+  const customers = await Customer.findAll();
+  const marketing = await Employee.findAll({ where: { dept_no: 2 } });
+  const research = await Employee.findAll({ where: { dept_no: 3 } });
+  const business = await Employee.findAll({ where: { dept_no: 4 } });
+  const development = await Employee.findAll({ where: { dept_no: 5 } });
+  const employees = await Employee.findAll({ where: { authorization_no: 1 } });
   res.render('management/registerProject', { 
-    customers: customers, employees: employees, marketing: marketing, research: research, business: business, development: development
-  });
+    customers: customers, marketing: marketing, 
+    research: research, business: business, development: development, employees: employees });
 }));
 
 router.post('/project/register', catchErrors(async (req, res, next) => {
@@ -55,7 +55,8 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
     end_date: req.body.end,
     state: req.body.state,
     description: req.body.description,
-    customer_id: req.body.customer
+    customer_id: req.body.customer,
+    pm_no: req.body.pm
   });
 
   for(let employee of req.body.employee) {
@@ -73,10 +74,10 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
 
 router.get('/project/edit/:project_no', catchErrors(async (req, res, next) => {
   const customers = await Customer.findAll();
-  const marketing = await Employee.findAll({ where: { dept_no: 1 } });
-  const research = await Employee.findAll({ where: { dept_no: 2 } });
-  const business = await Employee.findAll({ where: { dept_no: 3 } });
-  const development = await Employee.findAll({ where: { dept_no: 4 } });
+  const marketing = await Employee.findAll({ where: { dept_no: 2 } });
+  const research = await Employee.findAll({ where: { dept_no: 3 } });
+  const business = await Employee.findAll({ where: { dept_no: 4 } });
+  const development = await Employee.findAll({ where: { dept_no: 5 } });
   const project = await Project.findOne({
     where: { project_no: req.params.project_no },
     include: [
@@ -232,22 +233,6 @@ router.get('/evaluation/:evaluation_item_no/delete', catchErrors(async (req, res
   const item = await EvaluationItem.findOne({ where: { evaluation_item_no: req.params.evaluation_item_no }});
   item.destroy();
   res.render('management/evaluationTypeList', {});
-}));
-
-router.get("/projects/finish", catchErrors(async (req, res, next) => {
-  const end_state_projects = await Project.findAll({ where: { state: "종료" }});
-
-  var today = new Date();
-
-  const end_date_projects = await Project.findAll({ 
-    where: {
-      state: "진행중",
-      end_date: {
-        [Op.lte]: today
-      } 
-    }
-  });
-  res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
 }));
 
 router.post('/project/state/end/:project_no', catchErrors(async (req, res, next) => {

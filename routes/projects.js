@@ -7,12 +7,15 @@ var EmpSkill = require('../models/emp_skill');
 var Task = require('../models/task');
 
 const catchErrors = require('../lib/async-error');
-const { rawAttributes } = require('../models/customer');
 var router = express.Router();
 
+// 경영진 권한에게 프로젝트 페이지를 보여줌. -> index.pug
+router.get('/index', catchErrors(async (req, res, next) => {
+  res.render('project/index');
+}));
 
-// 사용자가 project List를 조회할 때 요청
-router.get('/', catchErrors(async (req, res) => {
+// 사용자가 project List를 조회할 때 요청 -> list.pug
+router.get('/list', catchErrors(async (req, res) => {
   // 경영진의 권한을 가진 이에게는 모든 project에 대한 리스트를 줌
   if(req.session.authorization == 1) {
     const projects = await Project.findAll({});
@@ -40,12 +43,49 @@ router.get('/', catchErrors(async (req, res) => {
   }
 }));
 
-// 경영진 권한에게 프로젝트 페이지를 보여줌.
-router.get('/index', catchErrors(async (req, res, next) => {
-  res.render('project/index');
+// project detail에 대한 요청 -> details.pug
+router.get('/details/:project_no', catchErrors(async (req, res) => {
+  //proejct_no, description, pm이름 , customer 이름, 투입 직원 이름 + 직무, 진행 상태
+
+  // 프로젝트 객체 생성
+  let project_info = {};
+
+  const project = await Project.findOne({ where: { project_no: req.params.project_no }});
+
+  // 프로젝트 번호, 명, 설명, 상태 구하기
+  project_info.project_no = project.project_no;
+  project_info.project_name = project.project_name;
+  project_info.description = project.description;
+  project_info.state = project.state;
+
+  // PM 이름 구하기
+  const pm = await Employee.findOne({ where: { emp_no: project.pm_no }});
+  if(pm) project_info.pm_name = pm.name;
+  else project_info.pm_name = '미정';
+
+  // 고객사 이름 구하기
+  const customer = await Customer.findOne({ where: { customer_id: project.customer_id }});
+  project_info.customer_name = customer.customer_name;
+
+  // 투입 직원 리스트 전달
+  project_info.employees = [];
+
+  const participations = await Participation.findAll({ where: { project_no: req.params.project_no }});
+  for(let i=0; i<participations.length; i++) {
+    // 투입 직원 객체 생성
+    let employee = {};
+
+    // 프로젝트 투입 직원 찾기
+    const emp = await Employee.findOne({ where: { emp_no: participations[i].emp_no }});
+    employee.name = emp.name;
+    employee.duty = participations[i].duty;
+
+    // 투입직원들 객체에 투입 직원 정보 푸쉬
+    project_info.employees.push(employee);
+  }
+
+  res.render('project/details', { project_info });
 }));
-
-
 
 // 간트차트 태스크 데이터 가져오는 요청 처리
 router.get('/getTasks/:project_no', catchErrors(async (req, res) => {
@@ -86,7 +126,6 @@ router.get('/getTasks/:project_no', catchErrors(async (req, res) => {
 router.get('/checkTask/:project_no', catchErrors(async (req, res) => {
   var projectPercent = 0;
   var employeePercent = 0;
-  var employee;
   
   // 모든 태스크 가져오기
   const tasks = await Task.findAll({
@@ -115,33 +154,6 @@ router.get('/checkTask/:project_no', catchErrors(async (req, res) => {
       project_no: req.params.project_no,
       emp_no: req.session.user.emp_no,
       current_state: 'end',
-    }
-  });
-  
-  // 사용자의 verify 태스크 개수 추가
-  const verifyTask = await Task.findAll({
-    where: {
-      project_no: req.params.project_no,
-      emp_no: req.session.user.emp_no,
-      current_state: 'verify',
-    }
-  });
-  
-  // 사용자의 progress 태스크 개수 추가
-  const progressTask = await Task.findAll({
-    where: {
-      project_no: req.params.project_no,
-      emp_no: req.session.user.emp_no,
-      current_state: 'progress',
-    }
-  });
-  
-  // 사용자의 uncheck 태스크 개수 추가
-  const uncheckTask = await Task.findAll({
-    where: {
-      project_no: req.params.project_no,
-      emp_no: req.session.user.emp_no,
-      current_state: 'uncheck',
     }
   });
   
@@ -186,173 +198,25 @@ router.post('/addTask', catchErrors(async (req, res) => {
 
 // 스킬셋이 HTML & JAVASCRIPT인 직원 리스트 응답
 router.get('/addTask/all/HJ', catchErrors(async (req, res) => {
-  // 직원 리스트 선언
-  let empList = [];
-  let empNoList = [];
-  let empNameList = [];
-  
-  // EmpSkill 가져오기
-  const empSkill = await EmpSkill.findAll({
-    where: {
-      skill_no: [1, 2],
-    }
-  });
-  console.log(empSKill);
-  // 해당 스킬셋을 가진 직원들에 대해 모든 이름 값을 가져오기 위한 반복문
-  for (let i=0; i<empSkill.length; i++) {
-    // Employee 가져오기
-    const emp = await Employee.findOne({
-      where: {
-        emp_no: empSkill[i].emp_no,
-      },
-      attributes: ['name'],
-    });
-    
-    // 모든 직원 추가
-    empNoList.push(empSkill[i].emp_no);
-    empNameList.push(emp.name);
-  }
-  
-  // 중복 제거
-  const set1 = new Set(empNoList);
-  const set2 = new Set(empNameList);
-  empNoList = [...set1];
-  empNameList = [...set2];
-  
-  for (let i=0; i<empNoList.length; i++) {
-    console.log([empNoList[i], empNameList[i]]);
-    empList.push([empNoList[i], empNameList[i]]);
-  }
-  // 최종 리스트 전달
+  let empList = getEmployeesWithSkill([1, 2]);
   res.send(empList);
 }));
 
 // 스킬셋이 C# & C/C++인 직원 리스트 응답
 router.get('/addTask/all/CCC', catchErrors(async (req, res) => {
-  // 직원 리스트 선언
-  let empList = [];
-  let empNoList = [];
-  let empNameList = [];
-  
-  // EmpSkill 가져오기
-  const empSkill = await EmpSkill.findAll({
-    where: {
-      skill_no: [3, 4],
-    }
-  });
-  
-  // 해당 스킬셋을 가진 직원들에 대해 모든 이름 값을 가져오기 위한 반복문
-  for (let i=0; i<empSkill.length; i++) {
-    // Employee 가져오기
-    const emp = await Employee.findOne({
-      where: {
-        emp_no: empSkill[i].emp_no,
-      },
-      attributes: ['name'],
-    });
-    
-    // 모든 직원 추가
-    empNoList.push(empSkill[i].emp_no);
-    empNameList.push(emp.name);
-  }
-  
-  // 중복 제거
-  const set1 = new Set(empNoList);
-  const set2 = new Set(empNameList);
-  empNoList = [...set1];
-  empNameList = [...set2];
-  
-  
-  for (let i=0; i<empNoList.length; i++) {
-    empList.push([empNoList[i], empNameList[i]]);
-  }
-  // 최종 리스트 전달
+  let empList = getEmployeesWithSkill([3, 4]);
   res.send(empList);
 }));
 
 // 스킬셋이 Dart/Flutter & Java 인 직원 리스트 응답
 router.get('/addTask/all/DFJ', catchErrors(async (req, res) => {
-  // 직원 리스트 선언
-  let empList = [];
-  let empNoList = [];
-  let empNameList = [];
-  
-  // EmpSkill 가져오기
-  const empSkill = await EmpSkill.findAll({
-    where: {
-      skill_no: [5, 6],
-    }
-  });
-  
-  // 해당 스킬셋을 가진 직원들에 대해 모든 이름 값을 가져오기 위한 반복문
-  for (let i=0; i<empSkill.length; i++) {
-    // Employee 가져오기
-    const emp = await Employee.findOne({
-      where: {
-        emp_no: empSkill[i].emp_no,
-      },
-      attributes: ['name'],
-    });
-    
-    // 모든 직원 추가
-    empNoList.push(empSkill[i].emp_no);
-    empNameList.push(emp.name);
-  }
-  
-  // 중복 제거
-  const set1 = new Set(empNoList);
-  const set2 = new Set(empNameList);
-  empNoList = [...set1];
-  empNameList = [...set2];
-  
-  
-  for (let i=0; i<empNoList.length; i++) {
-    empList.push([empNoList[i], empNameList[i]]);
-  }
-  // 최종 리스트 전달
+  let empList = getEmployeesWithSkill([5, 6]);
   res.send(empList);
 }));
 
 // 스킬셋이 Python 인 직원 리스트 응답
 router.get('/addTask/all/Python', catchErrors(async (req, res) => {
-  // 직원 리스트 선언
-  let empList = [];
-  let empNoList = [];
-  let empNameList = [];
-  
-  // EmpSkill 가져오기
-  const empSkill = await EmpSkill.findAll({
-    where: {
-      skill_no: 7,
-    }
-  });
-  
-  // 해당 스킬셋을 가진 직원들에 대해 모든 이름 값을 가져오기 위한 반복문
-  for (let i=0; i<empSkill.length; i++) {
-    // Employee 가져오기
-    const emp = await Employee.findOne({
-      where: {
-        emp_no: empSkill[i].emp_no,
-      },
-      attributes: ['name'],
-    });
-    
-    // 모든 직원 추가
-    empNoList.push(empSkill[i].emp_no);
-    empNameList.push(emp.name);
-  }
-  
-  // 중복 제거
-  const set1 = new Set(empNoList);
-  const set2 = new Set(empNameList);
-  empNoList = [...set1];
-  empNameList = [...set2];
-  
-  
-  for (let i=0; i<empNoList.length; i++) {
-    empList.push([empNoList[i], empNameList[i]]);
-  }
-  // 최종 리스트 전달
+  let empList = getEmployeesWithSkill([7]);
   res.send(empList);
 }));
 
@@ -362,21 +226,11 @@ router.get('/addTask/all/:project_no', catchErrors(async (req, res) => {
   let empList = [];
   
   // EmpSkill 가져오기
-  const participations = await Participation.findAll({
-    where: {
-      project_no: req.params.project_no,
-    }
-  });
+  const participations = await Participation.findAll({ where: { project_no: req.params.project_no }});
   
   for(let i=0; i<participations.length; i++) {
     // Employee 가져오기
-    const emp = await Employee.findOne({
-      where: {
-        emp_no: participations[i].emp_no,
-      },
-      attributes: ['name'],
-    });
-    
+    const emp = await Employee.findOne({ where: { emp_no: participations[i].emp_no }, attributes: ['name']});
     empList.push([participations[i].emp_no, emp.name]);
   }
   
@@ -447,21 +301,62 @@ router.post('/finish', catchErrors(async (req, res) => {
   return res.send('true');
 }));
 
-// 프로젝트 자세히 보기
-router.get('/:project_no', catchErrors(async (req, res, next) => {
-  const project = await Project.findOne({
-    where: { project_no: req.params.project_no },
-    include: [
-      {
-        model: Employee,
-        as: 'project_emp'
-      },
-      {
-        model: Customer
-      }
-    ]
+router.get("/finish", catchErrors(async (req, res, next) => {
+  const end_state_projects = await Project.findAll({ where: { state: "종료" }});
+
+  var today = new Date();
+
+  const end_date_projects = await Project.findAll({ 
+    where: {
+      state: "진행중",
+      end_date: {
+        [Op.lte]: today
+      } 
+    }
   });
-  res.render('project/details', { project: project });
+  res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
 }));
+
+async function getEmployeesWithSkill(skillList) {
+  // 직원 리스트 선언
+  let empList = [];
+  let empNoList = [];
+  let empNameList = [];
+  
+  // EmpSkill 가져오기
+  const empSkill = await EmpSkill.findAll({
+    where: {
+      skill_no: skillList,
+    }
+  });
+  
+  // 해당 스킬셋을 가진 직원들에 대해 모든 이름 값을 가져오기 위한 반복문
+  for (let i=0; i<empSkill.length; i++) {
+    // Employee 가져오기
+    const emp = await Employee.findOne({
+      where: {
+        emp_no: empSkill[i].emp_no,
+      },
+      attributes: ['name'],
+    });
+    
+    // 모든 직원 추가
+    empNoList.push(empSkill[i].emp_no);
+    empNameList.push(emp.name);
+  }
+  
+  // 중복 제거
+  const set1 = new Set(empNoList);
+  const set2 = new Set(empNameList);
+  empNoList = [...set1];
+  empNameList = [...set2];
+  
+  
+  for (let i=0; i<empNoList.length; i++) {
+    empList.push([empNoList[i], empNameList[i]]);
+  }
+
+  return empList;
+}
 
 module.exports = router;

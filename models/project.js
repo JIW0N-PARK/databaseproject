@@ -67,7 +67,9 @@ module.exports = class Project extends Sequelize.Model {
         db.Project.hasMany(db.Task, { foreignKey: 'project_no', sourceKey: 'project_no'});
         
         // evaluation_result
-        db.Project.hasMany(db.EvaluationResult, { foreignKey: 'project_no', sourceKey: 'project_no'});
+        db.Project.hasMany(db.PMEvaluationResult, { foreignKey: 'project_no', sourceKey: 'project_no'});
+        db.Project.hasMany(db.PeerEvaluationResult, { foreignKey: 'project_no', sourceKey: 'project_no'});
+        db.Project.hasMany(db.CustomerEvaluationResult, { foreignKey: 'project_no', sourceKey: 'project_no'});
 
     }
 };

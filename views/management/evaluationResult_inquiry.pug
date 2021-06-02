@@ -6,16 +6,16 @@ block content
 		.table-responsive
 			.table-wrapper
 				.table-title
-					form(action="/", method="post")
+					form(action=`/eval/result`, method="post")
 						.row
 							.col-sm-2
-								select#researchOption.form-control
+								select#researchOption.form-control(name='type')
 									option.entire(value='all') 전체
 									option.employeeName(value='empName') 직원명
 									option.employeeNum(value='empNum') 직원번호
-									option.projectName(value='projectName') 프로젝트명
+									option.projectName(value='projectName') 프로젝트 번호
 							.col-sm-2
-								input#inputInformation.searchInput(type='information')
+								input#inputInformation.searchInput(type='information', name='search')
 							.col-sm-1
 								button#search.searchNav(type='button' value='inquiry' title='inquiry') 조회
 							.col-sm-4
@@ -27,24 +27,30 @@ block content
 					thead
 						tr  
 							th check
-							th 직원명
-							th 프로젝트명
+							th 직원 사번
+							th 직원 이름
+							th 프로젝트 번호
+							th 프로젝트 이름
 							th 동료평가
 							th PM평가
 							th 고객평가
 							th 총합
 							th 평균
-					tbody#tbody
-						tr
-							th
-								input(type='checkbox')
-							td 지원
-							td 테스트
-							td 100
-							td 100
-							td 100
-							td 300
-							td 100
+					tbody
+						each result in results 
+							tr 
+								td
+									input.form-check-input.ml-3(type="checkbox")
+								td= result[0]
+								td= result[1] 
+								td= result[2]
+								td= result[3]
+								td= result[4]
+								td= result[5]
+								td= result[6]
+								td= result[7]
+								td= result[8]
+								
 
-	//- script(src='https://unpkg.com/axios/dist/axios.min.js')
-	//- script(src="/evaluation_result.js")
+	script(src='https://unpkg.com/axios/dist/axios.min.js')
+	script(src="/evaluation_result.js")

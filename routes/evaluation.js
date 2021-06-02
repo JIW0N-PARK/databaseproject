@@ -2,7 +2,7 @@
 var express = require('express');
 var router = express.Router();
 const catchErrors = require("../lib/async-error");
-const { Project, Employee, Participation, PeerEvaluation, PMEvaluation, CustomerEvaluation} = require('../models');
+const { Project, Employee, Participation, PeerEvaluationResult, PMEvaluationResult, CustomerEvaluationResult} = require('../models');
 
 
 router.get('/peer', async (req, res, next) => {
@@ -108,56 +108,76 @@ router.get('/result/all', catchErrors(async (req, res) => {
         evaluationResult.push(project.project_name);
 
         // 동료 평가 점수 추가
-        let sum = 0;
-        const peer_eval = await PeerEvaluation.findAll({
+        let peer_sum = 0;
+        const peer_eval = await PeerEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
 
-        let evaluation_score1 = 0;
+        let peer_evaluation_score = 0;
         if(peer_eval.length != 0) {
             for(let j=0; j<peer_eval.length; j++) {
                 if(peer_eval[j] != null)
-                    sum += (peer_eval[j].evaluation_score1 + peer_eval[j].evaluation_score2) / 2;
+                peer_sum += peer_eval[j].score;
             }
-            evaluation_score1 = Math.round(sum/peer_eval.length);
-            evaluationResult.push(evaluation_score1 + "점");
+            peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
+            evaluationResult.push(peer_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
 
         // PM 평가 점수 추가
-        const pm_eval = await PMEvaluation.findOne({
+        let pm_sum = 0;
+        const pm_eval = await PMEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
-        let evaluation_score2 = 0;
-        if (pm_eval != null) {
-            evaluation_score2 = (pm_eval.evaluation_score1 + pm_eval.evaluation_score2)/2;
-            evaluationResult.push(evaluation_score2 + "점");
+
+        let pm_evaluation_score = 0;
+        if(pm_eval.length != 0) {
+            for(let j=0; j<pm_eval.length; j++) {
+                if(pm_eval[j] != null)
+                pm_sum += pm_eval[j].score;
+            }
+            pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
+            evaluationResult.push(pm_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
 
         // 고객 평가 점수 추가
-        const customer_eval = await CustomerEvaluation.findOne({
+        let customer_sum = 0;
+        const customer_eval = await CustomerEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
 
-        let evaluation_score3 = 0;
-        if (customer_eval != null) {
-            evaluation_score3 = (customer_eval.evaluation_score1 + customer_eval.evaluation_score2)/2;
-            evaluationResult.push(evaluation_score3 + "점");
+        let customer_evaluation_score = 0;
+        if(customer_eval.length != 0) {
+            for(let j=0; j<customer_eval.length; j++) {
+                if(customer_eval[j] != null)
+                    customer_sum += customer_eval[j].score;
+            }
+            customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
+            evaluationResult.push(customer_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
     
         // 총합 점수 추가
-        evaluationResult.push(Math.round(evaluation_score1 + evaluation_score2 + evaluation_score3) + "점");
+        evaluationResult.push(Math.round(peer_evaluation_score + pm_evaluation_score + customer_evaluation_score) + "점!");
 
         // 평균 추가
-        evaluationResult.push(Math.round((evaluation_score1 + evaluation_score2 + evaluation_score3)/3) + "점");
+        evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점!");
 
         // 평가 정보 리스트 전달
         if(evaluationResult.length == 8)
@@ -167,22 +187,37 @@ router.get('/result/all', catchErrors(async (req, res) => {
     res.send(allEvaluationList);
 }));
 
-router.get('/result/empName', catchErrors(async (req, res) => {
+router.get('/result/empName/:emp_name', catchErrors(async (req, res) => {
     var allEvaluationList = [];
-    //모든 프로젝트에 참여자
-    const participations = await Participation.findAll({});
+
+    const employees = await Employee.findAll({
+        where: {
+            emp_name: req.params.emp_name
+        }
+    });
+
+    if(employees.length == 0) {
+        req.flash("danger", `${req.params.emp_name}을 가진 직원이 없습니다.`);
+	    return res.redirect("/eval/result");
+    }
+
+    var participations = [];
+
+    for(let employee in employees) {
+        const participation = await Participation.findOne({
+            where : {
+                emp_no: employee.emp_no
+            }
+        });
+        participations.push(participation);
+    }
 
     //각각의 프로젝트 참여자에 대한 list 생성
     for(let i=0; i<participations.length; i++) {
         let evaluationResult = [];
 
         // 직원 이름 추가
-        const employee = await Employee.findOne({
-            where: {
-                emp_no: participations[i].emp_no
-            },
-        });
-        evaluationResult.push(employee.name);
+        evaluationResult.push(req.params.emp_name);
     
         // 프로젝트 이름 추가
         const project = await Project.findOne({
@@ -193,59 +228,79 @@ router.get('/result/empName', catchErrors(async (req, res) => {
         evaluationResult.push(project.project_name);
 
         // 동료 평가 점수 추가
-        let sum = 0;
-        const peer_eval = await PeerEvaluation.findAll({
+        let peer_sum = 0;
+        const peer_eval = await PeerEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
 
-        let evaluation_score1 = 0;
+        let peer_evaluation_score = 0;
         if(peer_eval.length != 0) {
             for(let j=0; j<peer_eval.length; j++) {
                 if(peer_eval[j] != null)
-                    sum += (peer_eval[j].evaluation_score1 + peer_eval[j].evaluation_score2) / 2;
+                peer_sum += peer_eval[j].score;
             }
-            evaluation_score1 = Math.round(sum/peer_eval.length);
-            evaluationResult.push(evaluation_score1);
+            peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
+            evaluationResult.push(peer_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
 
         // PM 평가 점수 추가
-        const pm_eval = await PMEvaluation.findOne({
+        let pm_sum = 0;
+        const pm_eval = await PMEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
-        let evaluation_score2 = 0;
-        if (pm_eval != null) {
-            evaluation_score2 = (pm_eval.evaluation_score1 + pm_eval.evaluation_score2)/2;
-            evaluationResult.push(evaluation_score2);
+
+        let pm_evaluation_score = 0;
+        if(pm_eval.length != 0) {
+            for(let j=0; j<pm_eval.length; j++) {
+                if(pm_eval[j] != null)
+                pm_sum += pm_eval[j].score;
+            }
+            pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
+            evaluationResult.push(pm_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
 
         // 고객 평가 점수 추가
-        const customer_eval = await CustomerEvaluation.findOne({
+        let customer_sum = 0;
+        const customer_eval = await CustomerEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
 
-        let evaluation_score3 = 0;
-        if (customer_eval != null) {
-            evaluation_score3 = (customer_eval.evaluation_score1 + customer_eval.evaluation_score2)/2;
-            evaluationResult.push(evaluation_score3);
+        let customer_evaluation_score = 0;
+        if(customer_eval.length != 0) {
+            for(let j=0; j<customer_eval.length; j++) {
+                if(customer_eval[j] != null)
+                    customer_sum += customer_eval[j].score;
+            }
+            customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
+            evaluationResult.push(customer_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
     
         // 총합 점수 추가
-        evaluationResult.push(Math.round(evaluation_score1 + evaluation_score2 + evaluation_score3));
+        evaluationResult.push(Math.round(peer_evaluation_score + pm_evaluation_score + customer_evaluation_score) + "점!");
 
         // 평균 추가
-        evaluationResult.push(Math.round((evaluation_score1 + evaluation_score2 + evaluation_score3)/3));
+        evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점!");
 
         // 평가 정보 리스트 전달
-        if(evaluationResult.length == 7)
+        if(evaluationResult.length == 8)
             allEvaluationList.push(evaluationResult);
     }
 
@@ -282,69 +337,93 @@ router.get('/result/empNum/:emp_no', catchErrors(async (req, res) => {
         evaluationResult.push(project.project_name);
 
         // 동료 평가 점수 추가
-        let sum = 0;
-        const peer_eval = await PeerEvaluation.findAll({
+        let peer_sum = 0;
+        const peer_eval = await PeerEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
 
-        let evaluation_score1 = 0;
+        let peer_evaluation_score = 0;
         if(peer_eval.length != 0) {
             for(let j=0; j<peer_eval.length; j++) {
                 if(peer_eval[j] != null)
-                    sum += (peer_eval[j].evaluation_score1 + peer_eval[j].evaluation_score2) / 2;
+                peer_sum += peer_eval[j].score;
             }
-            evaluation_score1 = Math.round(sum/peer_eval.length);
-            evaluationResult.push(evaluation_score1);
+            peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
+            evaluationResult.push(peer_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
 
         // PM 평가 점수 추가
-        const pm_eval = await PMEvaluation.findOne({
+        let pm_sum = 0;
+        const pm_eval = await PMEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
-        let evaluation_score2 = 0;
-        if (pm_eval != null) {
-            evaluation_score2 = (pm_eval.evaluation_score1 + pm_eval.evaluation_score2)/2;
-            evaluationResult.push(evaluation_score2);
+
+        let pm_evaluation_score = 0;
+        if(pm_eval.length != 0) {
+            for(let j=0; j<pm_eval.length; j++) {
+                if(pm_eval[j] != null)
+                pm_sum += pm_eval[j].score;
+            }
+            pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
+            evaluationResult.push(pm_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
 
         // 고객 평가 점수 추가
-        const customer_eval = await CustomerEvaluation.findOne({
+        let customer_sum = 0;
+        const customer_eval = await CustomerEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
 
-        let evaluation_score3 = 0;
-        if (customer_eval != null) {
-            evaluation_score3 = (customer_eval.evaluation_score1 + customer_eval.evaluation_score2)/2;
-            evaluationResult.push(evaluation_score3);
+        let customer_evaluation_score = 0;
+        if(customer_eval.length != 0) {
+            for(let j=0; j<customer_eval.length; j++) {
+                if(customer_eval[j] != null)
+                    customer_sum += customer_eval[j].score;
+            }
+            customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
+            evaluationResult.push(customer_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
     
         // 총합 점수 추가
-        evaluationResult.push(Math.round(evaluation_score1 + evaluation_score2 + evaluation_score3));
+        evaluationResult.push(Math.round(peer_evaluation_score + pm_evaluation_score + customer_evaluation_score) + "점!");
 
         // 평균 추가
-        evaluationResult.push(Math.round((evaluation_score1 + evaluation_score2 + evaluation_score3)/3));
+        evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점!");
 
         // 평가 정보 리스트 전달
-        if(evaluationResult.length == 7)
+        if(evaluationResult.length == 8)
             allEvaluationList.push(evaluationResult);
     }
 
     res.send(allEvaluationList);
 }));
 
-router.get('/result/projectName', catchErrors(async (req, res) => {
+router.get('/result/projectName/:project_no', catchErrors(async (req, res) => {
     var allEvaluationList = [];
     //모든 프로젝트에 참여자
-    const participations = await Participation.findAll({});
+    const participations = await Participation.findAll({
+        where : {
+            project_no : req.params.project_no
+        }
+    });
 
     //각각의 프로젝트 참여자에 대한 list 생성
     for(let i=0; i<participations.length; i++) {
@@ -367,59 +446,79 @@ router.get('/result/projectName', catchErrors(async (req, res) => {
         evaluationResult.push(project.project_name);
 
         // 동료 평가 점수 추가
-        let sum = 0;
-        const peer_eval = await PeerEvaluation.findAll({
+        let peer_sum = 0;
+        const peer_eval = await PeerEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
 
-        let evaluation_score1 = 0;
+        let peer_evaluation_score = 0;
         if(peer_eval.length != 0) {
             for(let j=0; j<peer_eval.length; j++) {
                 if(peer_eval[j] != null)
-                    sum += (peer_eval[j].evaluation_score1 + peer_eval[j].evaluation_score2) / 2;
+                peer_sum += peer_eval[j].score;
             }
-            evaluation_score1 = Math.round(sum/peer_eval.length);
-            evaluationResult.push(evaluation_score1 + "점");
+            peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
+            evaluationResult.push(peer_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
 
         // PM 평가 점수 추가
-        const pm_eval = await PMEvaluation.findOne({
+        let pm_sum = 0;
+        const pm_eval = await PMEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
-        let evaluation_score2 = 0;
-        if (pm_eval != null) {
-            evaluation_score2 = (pm_eval.evaluation_score1 + pm_eval.evaluation_score2)/2;
-            evaluationResult.push(evaluation_score2 + "점");
+
+        let pm_evaluation_score = 0;
+        if(pm_eval.length != 0) {
+            for(let j=0; j<pm_eval.length; j++) {
+                if(pm_eval[j] != null)
+                pm_sum += pm_eval[j].score;
+            }
+            pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
+            evaluationResult.push(pm_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
 
         // 고객 평가 점수 추가
-        const customer_eval = await CustomerEvaluation.findOne({
+        let customer_sum = 0;
+        const customer_eval = await CustomerEvaluationResult.findAll({
             where: {
-                non_evaluator_no: participations[i].emp_no,
+                non_evaluator_emp_no: participations[i].emp_no,
                 project_no: participations[i].project_no,
             }
         });
 
-        let evaluation_score3 = 0;
-        if (customer_eval != null) {
-            evaluation_score3 = (customer_eval.evaluation_score1 + customer_eval.evaluation_score2)/2;
-            evaluationResult.push(evaluation_score3 + "점");
+        let customer_evaluation_score = 0;
+        if(customer_eval.length != 0) {
+            for(let j=0; j<customer_eval.length; j++) {
+                if(customer_eval[j] != null)
+                    customer_sum += customer_eval[j].score;
+            }
+            customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
+            evaluationResult.push(customer_evaluation_score + "점");
+        }
+        else {
+            evaluationResult.push("평가 미완료");
         }
     
         // 총합 점수 추가
-        evaluationResult.push(Math.round(evaluation_score1 + evaluation_score2 + evaluation_score3) + "점");
+        evaluationResult.push(Math.round(peer_evaluation_score + pm_evaluation_score + customer_evaluation_score) + "점!");
 
         // 평균 추가
-        evaluationResult.push(Math.round((evaluation_score1 + evaluation_score2 + evaluation_score3)/3) + "점");
+        evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점!");
 
         // 평가 정보 리스트 전달
-        if(evaluationResult.length == 7)
+        if(evaluationResult.length == 8)
             allEvaluationList.push(evaluationResult);
     }
 

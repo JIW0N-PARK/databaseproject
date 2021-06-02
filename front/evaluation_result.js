@@ -3,6 +3,7 @@ var project_name = null;
 var emp_no = null;
 var emp_name = null;
 var optionValue = 'all';
+var searchValue = null;
 var className = ['goodEmployeeCheck', 'employeeName', 'projectName', 'peerResult', 'pmResult', 'customerResult', 'sum', 'avg'];
 
 // window onload시 프로젝트 리스트를 가져오고 이벤트 리스너를 등록함
@@ -80,6 +81,8 @@ async function setSearchButton() {
             optionValue = e.target.value;
         });
 
+        searchValue = document.getElementById('inputInformation');
+
         if (optionValue == 'all') showEvaluation(1);
         else if (optionValue == 'empName') showEvaluation(2);
         else if (optionValue == 'empNum') showEvaluation(3);
@@ -102,15 +105,15 @@ async function getEvaluation1() {
 }
 
 async function getEvaluation2() {
-    return await axios.get(`/evaluation/result/empName`);
+    return await axios.get(`/evaluation/result/empName/${searchValue}`);
 }
 
 async function getEvaluation3() {
-    return await axios.get(`/evaluation/result/empNum/${emp_no}`);
+    return await axios.get(`/evaluation/result/empNum/${searchValue}`);
 }
 
 async function getEvaluation4() {
-    return await axios.get(`/evaluation/result/projectName`);
+    return await axios.get(`/evaluation/result/projectName/${searchValue}`);
 }
 
 function removeRow() {

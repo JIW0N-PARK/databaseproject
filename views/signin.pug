@@ -3,8 +3,6 @@ extends layout
 block content
   .container.signin
     br
-    br
-    br
     .loginView
             h3 Prompt Solution
             br
@@ -14,24 +12,24 @@ block content
                   p.loginMember 회원 로그인
                 .row 
                   .input-group.mb-3
-                    input.myinput(type='text' name="id" placeholder='아이디' aria-label='Username' aria-describedby='basic-addon1')
+                    input.myinput(type='text' name="id" placeholder='아이디' required)
                 .row
                   .input-group.mb-3
-                    input.myinput(type='password' name='password' placeholder='비밀번호' aria-label='Userpassword' aria-describedby='basic-addon1') 
+                    input.myinput(type='password' name='password' placeholder='비밀번호' required) 
                 br
                 button.loginButton(type='submit') 로그인
               br
-            form.guest(action='/', method='POST')
+            form.guest(action='/signin/customer', method='POST')
               br
               br
-              br
+
               p.loginCustomer 비회원 로그인
               .row 
                 .input-group.mb-3
-                  input.myinput(type='text' name='clientId' placeholder='고객아이디' aria-label='Clientname' aria-describedby='basic-addon1')
+                  input.myinput(type='text' name='email' placeholder='고객 이메일' required)
               .row
                 .input-group.mb-3
-                  input.myinput(type='password' name= 'certifiedKey' placeholder='인증키' aria-label='Clientkey' aria-describedby='basic-addon1')
+                  input.myinput(type='password' name= 'authKey' placeholder='인증키' required)
               br
               button.loginButton(type='submit') 로그인
               br

@@ -8,13 +8,17 @@ const catchErrors = require("../lib/async-error");
 var bcrypt = require("bcrypt");
 var Department = require("../models/department");
 const BestEmployee = require("../models/best_employee");
+const Customer = require("../models/customer");
 
 function generateHash(password) {
   return bcrypt.hash(password, 10);
 }
 
 function comparePassword(password, hash) {
-  return bcrypt.compare(password, hash);
+  bcrypt.compare(password, hash, function(err, result) {
+		console.log(result);
+		return result;
+	});
 }
 
 function getMonth() {
@@ -97,7 +101,12 @@ router.route("/signin")
 			const user = await Employee.findOne({ where: { ID: req.body.id } });
 			if (!user) {
 				req.flash("danger", "존재하지 않는 ID 입니다.");
-				return res.redirect("back");
+				return res.redirect("/signin");
+			}
+
+			if(comparePassword(req.body.password, user.PWD)==false) {
+				req.flash("danger", "비밀번호가 맞지 않습니다.");
+				return res.redirect("/signin");
 			}
 
 			const projects = await Project.findAll({
@@ -185,6 +194,7 @@ router.post("/signup", catchErrors(async (req, res, next) => {
 
 router.get("/signout", (req, res, next) => {
 	delete req.session.user;
+	delete req.session.customer;
 	req.flash("success", "정상적으로 로그아웃 되었습니다.");
 	res.redirect("/");
 });
@@ -227,7 +237,30 @@ router.put('/mypage/:id', catchErrors(async (req, res, next) => {
 	res.render('mypage/editProfile',{});
 }));
 
+router.post('/signin/customer', catchErrors(async (req, res, next) => {
+	const customer = await Customer.findOne({
+		where: { e_mail: req.body.email }
+	});
 
+	if (!customer) {
+		req.flash("danger", "존재하지 않는 email 입니다.");
+		return res.redirect("back");
+	}
+
+	if(!customer.auth_key) {
+		req.flash("danger", "인증키가 부여되지 않았습니다.");
+		return res.redirect("/signin");
+	}
+
+	if(customer.auth_key != req.body.authKey) {
+		req.flash("danger", "올바른 인증키가 아닙니다.");
+		return res.redirect("/signin");
+	}
+
+	req.session.customer = customer;
+	req.flash("secondary", `${customer.customer_name} 고객님 환영합니다!`);
+	return res.redirect("/");
+}));
 
 
 module.exports = router;

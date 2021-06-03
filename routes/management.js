@@ -10,6 +10,15 @@ const catchErrors = require("../lib/async-error");
 
 const Op = Sequelize.Op;
 
+function isValidDate(start, end) {
+  var start_date = new Date(start);
+  var end_date = new Date(end);
+  if(start_date > end_date){
+    return false;
+  }
+  return true;
+}
+
 router.get('/', function (req, res, next) {
   res.render('management/index',{});
 });
@@ -45,10 +54,11 @@ router.get('/project/register', catchErrors(async (req, res, next) => {
 }));
 
 router.post('/project/register', catchErrors(async (req, res, next) => {
-  //새로운 프로젝트를 생성하면서 동시에 participation 생성해야함.
 
-  console.log(req.body);
-
+  if(!isValidDate(req.body.start, req.body.end)){
+    req.flash('danger', '시작 일자가 종료 일자보다 앞설 수 없습니다.');
+    return res.redirect('/projects/index');
+  }
   const project = await Project.create({
     project_name: req.body.name,
     start_date: req.body.start,

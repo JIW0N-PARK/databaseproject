@@ -12,6 +12,15 @@ const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
 const catchErrors = require('../lib/async-error');
 
+function isValidDate(start, end) {
+  var start_date = new Date(start);
+  var end_date = new Date(end);
+  if(start_date > end_date){
+    return false;
+  }
+  return true;
+}
+
 // 경영진 권한에게 프로젝트 페이지를 보여줌.
 router.get('/index', catchErrors(async (req, res, next) => {
   res.render('project/index');
@@ -327,6 +336,11 @@ router.get("/finish", catchErrors(async (req, res, next) => {
 }));
 
 router.post("/search", catchErrors(async (req, res, next) => {
+  if(!isValidDate(req.body.start, req.body.end)){
+    req.flash('danger', '시작 일자가 종료 일자보다 앞설 수 없습니다.');
+    return res.redirect('/projects/list');
+  }
+
   const projects = await Project.findAll({
     where: {
       [Op.or] : [

@@ -3,38 +3,38 @@ extends ../layout
 //- 새로운 프로젝트 생성
 block content
   .container 
-    form(action="/management/project/register", method="post")
+    form(action="/management/project/register", method="post" id='registerForm')
       h1.text-center.mt-5 프로젝트 등록
 
     .form-group
         .row.align-items-center
             .col.mt-4
             h3 프로젝트명
-            input.form-control(type="text", placeholder="프로젝트 이름", name="name")
+            input.form-control(type="text", placeholder="프로젝트 이름", name="name", form='registerForm' required)
         .row.align-items-center.mt-4
             .col
             h3 착수일자
-            input.form-control(type="date", placeholder="starts", name="start")
+            input.form-control(type="date", placeholder="starts", name="start", form='registerForm' required)
         .row.align-items-center.mt-4
             .col
             h3 종료일자
-            input.form-control(type="date", placeholder="ends", name="end")
+            input.form-control(type="date", placeholder="ends", name="end", form='registerForm' required)
         .row.align-items-center.mt-4
             .col
             h3 거래처
-            select.form-control(name="customer", size="1")
+            select.form-control(name="customer", size="1", form='registerForm')
                 each customer in customers
                     option(value=`${customer.customer_id}`)= customer.customer_name
         .row.align-items-center.mt-4
             .col
             h3 프로젝트 담당자(PM)
-            select.form-control(name="pm", size="1")
+            select.form-control(name="pm", size="1", form='registerForm')
                 each employee in employees
                     option(value=`${employee.emp_no}`)= employee.name
         .row.align-items-center.mt-4
             .col
             h3 프로젝트 상세설명
-            input.form-control(type="text", placeholder="프로젝트에 대한 간단한 설명", name="description")
+            input.form-control(type="text", placeholder="프로젝트에 대한 간단한 설명", name="description", form='registerForm' required)
         .row.align-items-center.mt-4
             .col 
             h3 프로젝트 진행상태
@@ -50,7 +50,7 @@ block content
                                 h6.card-subtitle.text-muted
                                     each employee in marketing
                                         .form-check.form-check-inline
-                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
+                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`, form='registerForm')
                                             label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
                 .col 
                     h5 연구관리 부서
@@ -59,7 +59,7 @@ block content
                                 h6.card-subtitle.text-muted
                                     each employee in research
                                         .form-check.form-check-inline
-                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
+                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`, form='registerForm')
                                             label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
                 .col 
                     h5 경영관리 부서
@@ -68,7 +68,7 @@ block content
                                 h6.card-subtitle.text-muted
                                     each employee in business
                                         .form-check.form-check-inline
-                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
+                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`, form='registerForm')
                                             label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
                 .col 
                     h5 개발 부서
@@ -77,9 +77,9 @@ block content
                                 h6.card-subtitle.text-muted
                                     each employee in development
                                         .form-check.form-check-inline
-                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
+                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`, form='registerForm')
                                             label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
                 
         .row.justify-content-start.mt-4
             .col(style="margin-bottom: 1em")
-            button.btn.btn-outline-dark(type="submit", style="float: right") 프로젝트 등록하기
+            button.btn.btn-outline-dark(type="submit", style="float: right", form='registerForm') 프로젝트 등록하기

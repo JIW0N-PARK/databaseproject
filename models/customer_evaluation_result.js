@@ -49,11 +49,12 @@ module.exports = class CustomerEvaluationResult extends Sequelize.Model {
     db.EvaluationItems.hasMany(db.CustomerEvaluationResult, { foreignKey: 'evaluation_item_no', sourceKey: 'evaluation_item_no'});
 
     // Employee Model과 연결
-    db.CustomerEvaluationResult.belongsTo(db.Employee, { foreignKey: 'evaluator_emp_no', targetKey: 'emp_no'});
     db.CustomerEvaluationResult.belongsTo(db.Employee, { foreignKey: 'non_evaluator_emp_no', targetKey: 'emp_no'});
 
     // Project Model과 연결
     db.CustomerEvaluationResult.belongsTo(db.Project, { foreignKey: 'project_no', targetKey: 'project_no'});
+
+    db.CustomerEvaluationResult.belongsTo(db.Customer, { foreignKey: 'customer_id', targetKey: 'customer_id'});
     
   }
 };

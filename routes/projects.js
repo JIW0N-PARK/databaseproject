@@ -5,7 +5,11 @@ var Customer = require('../models/customer');
 var Employee = require('../models/employee');
 var EmpSkill = require('../models/emp_skill');
 var Task = require('../models/task');
-e
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
+
 
 const catchErrors = require('../lib/async-error');
 var router = express.Router();
@@ -247,12 +251,15 @@ router.post('/finish', catchErrors(async (req, res) => {
   // 인증키 문자열 선언
   let grantKey = "";
   // req body 값 가져오기
-  const { project_no, customer_id, start_date } = req.body;
-  // start_date값 쪼개기
-  const year = start_date.getFullYear();
-  const month = start_date.getMonth();
-  const day = start_date.getDay();
+  let { project_no, customer_id, start_date } = req.body;
   
+
+  // start_date값 쪼개기
+  start_date = new Date(start_date);
+  const year = start_date.getFullYear();
+  const month = start_date.getMonth() + 1;
+  const day = start_date.getDate();
+
   const items = [project_no, customer_id, year, month, day];
   
   // 인증키 첫 번째 값: project_no
@@ -260,12 +267,12 @@ router.post('/finish', catchErrors(async (req, res) => {
   
   // 인증키 두 번째 값: day
   grantKey += day;
-  
   // 인증키 세 번째 값: 모든 값의 합
   let sum = 0;
-  for(let item in items) {
-    sum += parseInt(item);
+  for(let i=0; i<items.length; i++) {
+    sum += parseInt(items[i]);
   }
+
   grantKey += sum;
   
   // 인증키 네 번째 값: year
@@ -273,12 +280,12 @@ router.post('/finish', catchErrors(async (req, res) => {
   
   // 인증키 다섯 번째 값: 모든 값의 곱
   sum = 1;
-  for(let item in items) {
-    sum *= parseInt(item);
+  for(let i=0; i<items.length; i++) {
+    sum *= parseInt(items[i]);
   }
   grantKey += sum;
   
-  // 인증키 여섯 번째 값: project_no
+  // 인증키 여섯 번째 값: customer_id
   grantKey += customer_id;
   
   // 인증키 일곱 번째 값: month
@@ -300,7 +307,7 @@ router.post('/finish', catchErrors(async (req, res) => {
   });
   
   // 인증키에 대한 이메일 보내기
-  // 이메일 보내기
+  sendMail(customer);
   
   return res.send('true');
 }));
@@ -362,5 +369,33 @@ async function getEmployeesWithSkill(skillList) {
 
   return empList;
 }
+
+async function sendMail(customer) {
+  var transporter = nodemailer.createTransport(smtpTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    auth: {
+      user: 'project@email.com',
+      pass: ''
+    }
+  }));
+   
+  var mailOptions = {
+    from: "project@email.com",
+    to: customer.e_mail,
+    subject: '[Prompt Solution] 고객 평가를 위한 인증키 메일',
+    text: `인증키: ${customer.auth_key}`
+  };
+   
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  }); 
+}
+
+
 
 module.exports = router;

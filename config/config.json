@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "root",
+    "password": "1029",
+    "database": "databaseproject",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "admin",
+    "password": "databaseproject2021",
+    "database": "dbp",
+    "host": "dbp-database.c7pqvnaaomvy.ap-northeast-2.rds.amazonaws.com",
+    "dialect": "mysql"
+  }
+}

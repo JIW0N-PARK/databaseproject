@@ -2,13 +2,13 @@ extends ../layout
 
 block content 
   .container 
-    h1.mb-5.d-flex.justify-content-center  거래처 목록
+    h1.mt-5.mb-5.d-flex.justify-content-center  거래처 목록
     each customer in customers
       .row 
-        .card
+        .card.mb-3
           .card-body
-            h3.card-title.mb-3.d-flex.justify-content-center= customer.customer_name
+            h3.card-title.mb-3.d-flex.justify-content-center= `${customer.customer_name} (고객 번호 - ${customer.customer_id})`
             h3.card-title.mb-3.d-flex.justify-content-center= customer.e_mail
             .d-grid.gap-2.mt-2
-              a.btn.btn-outline-warning(href=`/management/customer/edit/${customer.customer_id}`) 거래처 수정하기
-              a.btn.btn-outline-danger(href=`/management/customer/delete/${customer.customer_id}`) 거래처 삭제하기
+              a.btn.btn-outline-dark(href=`/management/customer/${customer.customer_id}/edit`) 거래처 수정하기
+              a.btn.btn-outline-dark(href=`/management/customer/${customer.customer_id}?_method=DELETE`) 거래처 삭제하기

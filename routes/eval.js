@@ -28,8 +28,8 @@ router.get('/list', catchErrors(async (req, res, next) => {
       {    
         model: Employee,
         as: 'project_emp',
-        through: {
-          where: { emp_no: req.session.user.emp_no }
+        where: {
+          emp_no : req.session.user.emp_no
         }
       }
     ]

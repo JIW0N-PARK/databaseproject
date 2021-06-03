@@ -7,6 +7,7 @@ var Project = require('../models/project');
 const catchErrors = require("../lib/async-error");
 var bcrypt = require("bcrypt");
 var Department = require("../models/department");
+const BestEmployee = require("../models/best_employee");
 
 function generateHash(password) {
   return bcrypt.hash(password, 10);
@@ -14,6 +15,12 @@ function generateHash(password) {
 
 function comparePassword(password, hash) {
   return bcrypt.compare(password, hash);
+}
+
+function getMonth() {
+	let today = new Date();
+	let month = today.getMonth() + 1;
+	return month;
 }
 
 function validateForm(form) {
@@ -114,10 +121,26 @@ router.route("/signin")
 					req.flash("warning", `${project.project_name} 프로젝트의 마감일자까지 ${d_day}일 남았습니다.`);
 				}
 			}
+
+			var currentMonth = getMonth();
+			const best = await BestEmployee.findAll({
+				where: {
+					month: currentMonth
+				}
+			});
+
+			for(let emp of best){
+				const employee = await Employee.findOne({
+					where: {
+						emp_no : emp.emp_no
+					}
+				});
+				req.flash("success", `'${employee.name}' 님이 이달(${currentMonth}월)의 직원으로 선정되었습니다 !`);
+			}
 			
 			req.session.user = user;
 			req.session.authorization = user.authorization_no;
-			req.flash("success", `${user.name}님 환영합니다!`);
+			req.flash("secondary", `${user.name}님 환영합니다!`);
 			return res.redirect("/");
 		})
 	);

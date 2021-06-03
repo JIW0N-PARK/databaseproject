@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 const Sequelize = require('sequelize');
 var Employee = require("../models/employee");
-var Skill = require("../models/skill");
+var BestEmployee = require("../models/best_employee");
 var EmpSkill = require("../models/emp_skill");
 var Project = require('../models/project');
 var Participation = require('../models/participation');
@@ -13,6 +13,12 @@ var bcrypt = require("bcrypt");
 const PeerEvaluationResult = require("../models/peer_evaluation_result");
 const PmEvaluationResult = require("../models/pm_evaluation_result");
 const CustomerEvaluationResult = require("../models/customer_evaluation_result");
+
+function getMonth() {
+	let today = new Date();
+	let month = today.getMonth() + 1;
+	return month;
+}
 
 // 종료된 평가 조회
 router.get('/list', catchErrors(async (req, res, next) => {
@@ -285,8 +291,23 @@ router.get('/result', catchErrors(async (req, res, next) => {
     // 평균 추가
     evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점");
 
+		// 이달의 직원 check
+		var currentMonth = getMonth();
+		const best = await BestEmployee.findOne({
+			where: {
+				emp_no: participations[i].emp_no,
+				month: currentMonth
+			}
+		});
+		if(best){
+			evaluationResult.push("best");
+		}
+		else{
+			evaluationResult.push("0");
+		}
+
     // 평가 정보 리스트 전달
-    if(evaluationResult.length == 9)
+    if(evaluationResult.length == 10)
       allEvaluationList.push(evaluationResult);
   }
   res.render('management/evaluationResult_inquiry', { results: allEvaluationList });
@@ -392,9 +413,24 @@ router.post('/result/', catchErrors(async (req, res, next) => {
 
       // 평균 추가
       evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점");
+			
+			// 이달의 직원 check
+			var currentMonth = getMonth();
+			const best = await BestEmployee.findOne({
+				where: {
+					emp_no: participations[i].emp_no,
+					month: currentMonth
+				}
+			});
+			if(best){
+				evaluationResult.push("best");
+			}
+			else{
+				evaluationResult.push("0");
+			}
 
       // 평가 정보 리스트 전달
-      if(evaluationResult.length == 9)
+      if(evaluationResult.length == 10)
           allEvaluationList.push(evaluationResult);
     }
     return res.render('management/evaluationResult_inquiry', { results: allEvaluationList });
@@ -517,9 +553,24 @@ router.post('/result/', catchErrors(async (req, res, next) => {
 
         // 평균 추가
         evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점");
+				
+				// 이달의 직원 check
+				var currentMonth = getMonth();
+				const best = await BestEmployee.findOne({
+					where: {
+						emp_no: participations[i].emp_no,
+						month: currentMonth
+					}
+				});
+				if(best){
+					evaluationResult.push("best");
+				}
+				else{
+					evaluationResult.push("0");
+				}
 
         // 평가 정보 리스트 전달
-        if(evaluationResult.length == 9)
+        if(evaluationResult.length == 10)
             allEvaluationList.push(evaluationResult);
     }
     return res.render('management/evaluationResult_inquiry', { results: allEvaluationList });
@@ -626,9 +677,24 @@ router.post('/result/', catchErrors(async (req, res, next) => {
 
         // 평균 추가
         evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점");
+				
+				// 이달의 직원 check
+				var currentMonth = getMonth();
+				const best = await BestEmployee.findOne({
+					where: {
+						emp_no: participations[i].emp_no,
+						month: currentMonth
+					}
+				});
+				if(best){
+					evaluationResult.push("best");
+				}
+				else{
+					evaluationResult.push("0");
+				}
 
         // 평가 정보 리스트 전달
-        if(evaluationResult.length == 9)
+        if(evaluationResult.length == 10)
           allEvaluationList.push(evaluationResult);
     }
     return res.render('management/evaluationResult_inquiry', { results: allEvaluationList });
@@ -735,13 +801,63 @@ router.post('/result/', catchErrors(async (req, res, next) => {
 
         // 평균 추가
         evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점");
+				
+				// 이달의 직원 check
+				var currentMonth = getMonth();
+				const best = await BestEmployee.findOne({
+					where: {
+						emp_no: participations[i].emp_no,
+						month: currentMonth
+					}
+				});
+				if(best){
+					evaluationResult.push("best");
+				}
+				else{
+					evaluationResult.push("0");
+				}
 
         // 평가 정보 리스트 전달
-        if(evaluationResult.length == 9)
+        if(evaluationResult.length == 10)
             allEvaluationList.push(evaluationResult);
     }
     return res.render('management/evaluationResult_inquiry', { results: allEvaluationList });
   }
 }));
+
+router.post('/result/best-employee', catchErrors(async (req, res, next) => {
+	console.log(req.body);
+	var currentMonth = getMonth();
+	if(req.body.select){
+		for(let emp_no of req.body.select){
+			var best = await BestEmployee.findOne({
+				where: {
+					emp_no: emp_no,
+					month: currentMonth
+				}
+			});
+			if(!best){
+				best = await BestEmployee.create({
+					emp_no: emp_no,
+					month: currentMonth
+				});
+			}
+		}
+	}
+  if(req.body.cancle){
+		for(let emp_no of req.body.cancle){
+			var best = await BestEmployee.findOne({
+				where: {
+					emp_no: emp_no,
+					month: currentMonth
+				}
+			});
+			best.destroy();
+		}
+	}
+	req.flash('success', '정상적으로 선정/취소되었습니다.');
+	res.redirect('/eval/result');
+}));
+
 
 module.exports = router;

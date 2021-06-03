@@ -63,7 +63,7 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
     project_name: req.body.name,
     start_date: req.body.start,
     end_date: req.body.end,
-    state: req.body.state,
+    state: '진행중',
     description: req.body.description,
     customer_id: req.body.customer,
     pm_no: req.body.pm

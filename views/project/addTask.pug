@@ -3,16 +3,16 @@ extends ../layout
 //- 프로젝트 수정
 block content
   .container 
-    form(action="/")
+    form#addTaskForm(action="/", method='post')
       h1.text-center-mt-5 Add Task
 
       .form-group
         .form-row
-            .form-group.col-md-12.mt-4 
-                h4 업무명
+            .form-group.col-md-12.mt-4
+                h4#project(value=`${project_no}`) 업무명
                 input.form-control(type="text", placeholder="업무명", name = "title")
         .form-row
-            .form-group.col-md-12.mt-4 
+            .form-group.col-md-12.mt-4
                 h4 업무 내용
                 input.form-control(type="text", placeholder="업무 내용", name = "content")
         .form-row
@@ -26,6 +26,7 @@ block content
             .form-group.col-md-6.mt-4
                 h3 제출 파일 종류
                 select#submitFileSelect.form-control(name="submit_file")
+                    option(value="미선택") 미선택
                     option(value="문서") 문서
                     option(value="엑셀") 엑셀
                     option(value="Html/Javascript") Html/Javascript
@@ -40,6 +41,6 @@ block content
         .form-row
             .form-group.col-md-12.mt-4 
                 button#register.btn.btn-outline-dark(type="submit" style="float: right") 등록하기
-    
+
     script(src='https://unpkg.com/axios/dist/axios.min.js')
     script(src="/addTask.js")

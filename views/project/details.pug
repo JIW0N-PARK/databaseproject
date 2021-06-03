@@ -3,33 +3,35 @@ extends ../layout
 //- 프로젝트 상세 설명
 block content
   .container 
-    form(action="#", method="post")
+    form(action="#")
       h1.text-center-mt-5 Project Details
 
       div.card-group 
         .card
-          .card-body 
+          .card-body
             h4 프로젝트명
-            p.name(id="project" value=`${project.project_no}`)= project.project_name
+            p.name(id="project" value=`${project_info.project_no}`)= project_info.project_name
             h4 프로젝트 설명
-            p.details= project.description
+            p.details= project_info.description
             h4 프로젝트 담당자
-            p.PM 4조
+            p.PM= project_info.pm_name
             h4 거래처
-            p.client= project.Customer.customer_name
+            p.client= project_info.customer_name
             h4 투입 직원
-            h6.employee= project.project_emp[0].name
-            p.duty 직무: FrontEnd
-            h6.employee 저팔계
-            p.duty 직무: BackEnd
+            if(project_info.employees)
+              each employee in project_info.employees
+                h6.employee= employee.name
+                p.duty= employee.duty
+            else
+              p 투입 직원 없음
             h4 진행 상태
-            p.status= project.state
+            p.status= project_info.state
 
             div(id="chart_div")
           
             if(authorization == 1)
-              a.btn.btn-outline-dark(href=`/management/proejct/${project.project_no}/edit`) 프로젝트 수정</a>
-              a.btn.btn-outline-dark(href=`/management/project/${project.project_no}/delete`) 프로젝트 삭제</a>
+              a.btn.btn-outline-dark(href=`/management/proejct/${project_info.project_no}/edit`) 프로젝트 수정</a>
+              a.btn.btn-outline-dark(href=`/management/project/${project_info.project_no}/delete`) 프로젝트 삭제</a>
             <a href="list" class="btn btn-outline-dark">List로 돌아가기</a>
             
       script(src='https://unpkg.com/axios/dist/axios.min.js')

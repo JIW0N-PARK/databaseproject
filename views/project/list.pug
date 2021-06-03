@@ -16,10 +16,10 @@ block content
               p.duty= project.duty
               p.state= project.state
               .d-grid.gap-2.mt-2
-                a.btn.btn-outline-warning(href=`/projects/${project.project_no}`) 자세히
+                a.btn.btn-outline-warning(href=`/projects/details/${project.project_no}`) 자세히
                 a.btn.btn-outline-success(href=`/projects/checkTask/${project.project_no}`) 진행 사항
                 if(authorization == 1)
-                  a.btn.btn-outline-primary(href=`/projects/addTask`) 직원별 업무 부여하기
+                  a.btn.btn-outline-warning(href=`/projects/addTask/${project.project_no}`) 직원별 업무 부여하기
         else 
           .card-group
             .card 

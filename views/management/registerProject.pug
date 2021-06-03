@@ -4,82 +4,82 @@ extends ../layout
 block content
   .container 
     form(action="/management/project/register", method="post")
-      h1.text-center-mt-5 프로젝트 등록
+      h1.text-center.mt-5 프로젝트 등록
 
-        .form-group
-            .row.align-items-center
-                .col.mt-4
-                h3 프로젝트명
-                input.form-control(type="text", placeholder="프로젝트 이름", name="name")
-            .row.align-items-center.mt-4
-                .col
-                h3 착수일자
-                input.form-control(type="date", placeholder="starts", name="start")
-            .row.align-items-center.mt-4
-                .col
-                h3 종료일자
-                input.form-control(type="date", placeholder="ends", name="end")
-            .row.align-items-center.mt-4
-                .col
-                h3 거래처
-                select.form-control(name="customer", size="1")
-                    each customer in customers
-                        option(value=`${customer.customer_id}`)= customer.customer_name
-            .row.align-items-center.mt-4
-                .col
-                h3 프로젝트 담당자(PM)
-                select.form-control(name="pm", size="1")
-                    each employee in employees
-                        option(value=`${employee.emp_no}`)= employee.name
-            .row.align-items-center.mt-4
-                .col
-                h3 프로젝트 상세설명
-                input.form-control(type="text", placeholder="프로젝트에 대한 간단한 설명", name="description")
-            .row.align-items-center.mt-4
+    .form-group
+        .row.align-items-center
+            .col.mt-4
+            h3 프로젝트명
+            input.form-control(type="text", placeholder="프로젝트 이름", name="name")
+        .row.align-items-center.mt-4
+            .col
+            h3 착수일자
+            input.form-control(type="date", placeholder="starts", name="start")
+        .row.align-items-center.mt-4
+            .col
+            h3 종료일자
+            input.form-control(type="date", placeholder="ends", name="end")
+        .row.align-items-center.mt-4
+            .col
+            h3 거래처
+            select.form-control(name="customer", size="1")
+                each customer in customers
+                    option(value=`${customer.customer_id}`)= customer.customer_name
+        .row.align-items-center.mt-4
+            .col
+            h3 프로젝트 담당자(PM)
+            select.form-control(name="pm", size="1")
+                each employee in employees
+                    option(value=`${employee.emp_no}`)= employee.name
+        .row.align-items-center.mt-4
+            .col
+            h3 프로젝트 상세설명
+            input.form-control(type="text", placeholder="프로젝트에 대한 간단한 설명", name="description")
+        .row.align-items-center.mt-4
+            .col 
+            h3 프로젝트 진행상태
+            input.form-control(type='text', placeholder='진행중', readonly='', name='state', value='진행중') 
+        .row.align-items-center.mt-4
+            .col 
+            h3.mb-3 투입 직원
+            .row
                 .col 
-                h3 프로젝트 진행상태
-                input.form-control(type='text', placeholder='진행중', readonly='', name='state', value='진행중') 
-            .row.align-items-center.mt-4
+                    h5 마케팅 부서
+                        .card.mt-3
+                            .card-body
+                                h6.card-subtitle.text-muted
+                                    each employee in marketing
+                                        .form-check.form-check-inline
+                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
+                                            label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
                 .col 
-                h3.mb-3 투입 직원
-                .row
-                    .col 
-                        h5 마케팅 부서
-                            .card.mt-3
-                                .card-body
-                                    h6.card-subtitle.text-muted
-                                        each employee in marketing
-                                            .form-check.form-check-inline
-                                                input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
-                                                label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
-                    .col 
-                        h5 연구관리 부서
-                            .card.mt-3
-                                .card-body
-                                    h6.card-subtitle.text-muted
-                                        each employee in research
-                                            .form-check.form-check-inline
-                                                input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
-                                                label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
-                    .col 
-                        h5 경영관리 부서
-                            .card.mt-3
-                                .card-body
-                                    h6.card-subtitle.text-muted
-                                        each employee in business
-                                            .form-check.form-check-inline
-                                                input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
-                                                label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
-                    .col 
-                        h5 개발 부서
-                            .card.mt-3
-                                .card-body
-                                    h6.card-subtitle.text-muted
-                                        each employee in development
-                                            .form-check.form-check-inline
-                                                input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
-                                                label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
-                    
-            .row.justify-content-start.mt-4
-                .col(style="margin-bottom: 1em")
-                button.btn.btn-outline-success(type="submit", style="float: right") 프로젝트 등록하기
+                    h5 연구관리 부서
+                        .card.mt-3
+                            .card-body
+                                h6.card-subtitle.text-muted
+                                    each employee in research
+                                        .form-check.form-check-inline
+                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
+                                            label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
+                .col 
+                    h5 경영관리 부서
+                        .card.mt-3
+                            .card-body
+                                h6.card-subtitle.text-muted
+                                    each employee in business
+                                        .form-check.form-check-inline
+                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
+                                            label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
+                .col 
+                    h5 개발 부서
+                        .card.mt-3
+                            .card-body
+                                h6.card-subtitle.text-muted
+                                    each employee in development
+                                        .form-check.form-check-inline
+                                            input.form-check-input(type='checkbox', id=`inlineCheckbox${employee.emp_no}`, name='employee' , value=`${employee.emp_no}`)
+                                            label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
+                
+        .row.justify-content-start.mt-4
+            .col(style="margin-bottom: 1em")
+            button.btn.btn-outline-dark(type="submit", style="float: right") 프로젝트 등록하기

@@ -12,24 +12,24 @@ block content
             .card.mb-3
               .card-body 
                 h5 프로젝트명
-                p#project_name= project.project_name
+                p.mb-5#project_name= project.project_name
                 h5 프로젝트 번호
-                p#project_no= project.project_no
-                h6 프로젝트 시작 날짜
-                p#start_date= project.start_date               
-                h6 프로젝트 종료 날짜
-                p#end_date= project.end_date
-                h6 상태
-                p#state= project.state
-                h6 고객 번호
-                p#customer_id= project.customer_id
-                h6 담당자
-                p#PM= project.pm_no
+                p.mb-5#project_no= project.project_no
+                h5 프로젝트 시작 날짜
+                p.mb-5#start_date= project.start_date               
+                h5 프로젝트 종료 날짜
+                p.mb-5#end_date= project.end_date
+                h5 상태
+                p.mb-5#state= project.state
+                h5 고객 번호
+                p.mb-5#customer_id= project.customer_id
+                h5 담당자
+                p.mb-5#PM= project.pm_no
                 button.btn.btn-outline-dark(type="submit" style="float: right") 인증키 부여
     else 
       .card-group
         .card.mb-3
-          .card-body 
+          .card-body.text-center 
             h5 종료된 프로젝트가 없습니다.
 
 
@@ -58,7 +58,7 @@ block content
     else 
       .card-group
         .card.mb-3
-          .card-body 
+          .card-body.text-center
             h5 마감일자가 지난 프로젝트가 없습니다.
 
 

@@ -3,7 +3,7 @@ extends ../layout
 //- 새로운 프로젝트 생성
 block content
   .container 
-    h1.text-center.mb-5.mt-5 평가 항목 등록하기
+    h1.text-center.mb-5.mt-5 평가 항목 등록
     form(action="/eval/register/item", method="post")
       .form-group
           .row.align-items-center.mt-4
@@ -24,4 +24,4 @@ block content
                   
           .row.justify-content-start.mt-4
               .col(style="margin-bottom: 1em")
-              button.btn.btn-outline-success(type="submit", style="float: right") 평가항목 등록하기
+              button.btn.btn-outline-dark(type="submit", style="float: right") 평가항목 등록하기

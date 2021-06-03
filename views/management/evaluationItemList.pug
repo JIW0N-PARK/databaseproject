@@ -5,11 +5,11 @@ block content
       .table-responsive
         .table-wrapper
           .table-title
-            .row
+            .row.mt-3
               .col-sm-11
                 h2= `${type} 평가 항목 관리` 
               .col-sm-1
-                a.btn.btn-outline-primary(href='/eval/register/item') 항목추가
+                a.btn.btn-outline-dark(href='/eval/register/item') 항목추가
           br
           table.table.table-bordered
             thead
@@ -24,6 +24,6 @@ block content
                     td.itemContent= item.item_title
                     td.itemExample= item.item_example
                     td
-                      a.btn.btn-outline-warning.mr-3(href=`/eval/manage/${item.evaluation_item_no}`) 수정
-                      a.btn.btn-outline-danger(href=`/eval/manage/${item.evaluation_item_no}?_method=DELETE`) 항목삭제
+                      a.btn.btn-outline-dark.mr-3(href=`/eval/manage/${item.evaluation_item_no}`) 수정
+                      a.btn.btn-outline-dark(href=`/eval/manage/${item.evaluation_item_no}?_method=DELETE`) 항목삭제
               else 

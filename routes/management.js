@@ -242,13 +242,13 @@ router.post('/project/state/end/:project_no', catchErrors(async (req, res, next)
   res.redirect('back');
 }));
 
-router.get('/customer/edit/:id', catchErrors(async (req, res, next) => {
+router.get('/customer/:id/edit', catchErrors(async (req, res, next) => {
   const customer = await Customer.findOne({ where: { customer_id: req.params.id}});
   res.render('management/editCustomer', { customer: customer });
 }));
 
 //put
-router.post('/customer/edit/:id', catchErrors(async (req, res, next) => {
+router.put('/customer/:id', catchErrors(async (req, res, next) => {
   const customer = await Customer.findOne({ where: { customer_id: req.params.id}});
   customer.customer_name = req.body.name;
   customer.e_mail = req.body.email;
@@ -257,7 +257,7 @@ router.post('/customer/edit/:id', catchErrors(async (req, res, next) => {
   res.render('management/index');
 }));
 
-router.get('/customer/delete/:id', catchErrors(async (req, res, next) => {
+router.delete('/customer/:id', catchErrors(async (req, res, next) => {
   const customer = await Customer.findOne({ where: { customer_id: req.params.id}});
   await customer.destroy();
   req.flash('success', "성공적으로 삭제되었습니다.");

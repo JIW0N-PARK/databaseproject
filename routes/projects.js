@@ -10,8 +10,6 @@ var Task = require('../models/task');
 const Op = Sequelize.Op;
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
-
-
 const catchErrors = require('../lib/async-error');
 
 // 경영진 권한에게 프로젝트 페이지를 보여줌.
@@ -328,6 +326,28 @@ router.get("/finish", catchErrors(async (req, res, next) => {
   res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
 }));
 
+router.post("/search", catchErrors(async (req, res, next) => {
+  const projects = await Project.findAll({
+    where: {
+      [Op.or] : [
+        {
+          end_date: {
+            [Op.gte]: req.body.start,
+            [Op.lte]: req.body.end
+          }
+        },
+        {
+          start_date: {
+            [Op.lte]: req.body.end
+          }
+        }
+      ]
+    }
+  });
+
+  res.render("project/list", { projects: projects });
+}));
+
 async function getEmployeesWithSkill(skillList) {
   // 직원 리스트 선언
   let empList = [];
@@ -395,7 +415,5 @@ async function sendMail(customer) {
     }
   }); 
 }
-
-
 
 module.exports = router;

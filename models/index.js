@@ -12,7 +12,10 @@ const Project = require('./project');
 const Skill = require('./skill');
 const Task = require('./task');
 const EvaluationItems = require('./evaluation_items');
-const EvaluationResult = require('./evaluation_result');
+const PMEvaluationResult = require('./pm_evaluation_result');
+const PeerEvaluationResult = require('./peer_evaluation_result');
+const CustomerEvaluationResult = require('./customer_evaluation_result');
+const BestEmployee = require('./best_employee');
 
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config.json')[env];
@@ -35,7 +38,10 @@ db.Project = Project;
 db.Skill = Skill;
 db.Task = Task;
 db.EvaluationItems = EvaluationItems;
-db.EvaluationResult = EvaluationResult;
+db.PMEvaluationResult = PMEvaluationResult;
+db.PeerEvaluationResult = PeerEvaluationResult;
+db.CustomerEvaluationResult = CustomerEvaluationResult;
+db.BestEmployee = BestEmployee;
 
 Authorization.init(sequelize);
 Customer.init(sequelize);
@@ -50,7 +56,10 @@ Project.init(sequelize);
 Skill.init(sequelize);
 Task.init(sequelize);
 EvaluationItems.init(sequelize);
-EvaluationResult.init(sequelize);
+PMEvaluationResult.init(sequelize);
+PeerEvaluationResult.init(sequelize);
+CustomerEvaluationResult.init(sequelize);
+BestEmployee.init(sequelize);
  
 Authorization.associate(db);
 Customer.associate(db);
@@ -65,6 +74,9 @@ Project.associate(db);
 Skill.associate(db);
 Task.associate(db);
 EvaluationItems.associate(db);
-EvaluationResult.associate(db);
+PMEvaluationResult.associate(db);
+PeerEvaluationResult.associate(db);
+CustomerEvaluationResult.associate(db);
+BestEmployee.associate(db);
 
 module.exports = db;

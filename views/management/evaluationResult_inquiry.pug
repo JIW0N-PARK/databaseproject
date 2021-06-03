@@ -2,40 +2,62 @@ extends ../layout
 
 //- 특정직원의 동료,pm,peer평가 결과(점수,합계,평균)를 확인하는 페이지
 block content
-    .container
-        .table-responsive
-            .table-wrapper
-                .table-title
-                    form(action="/", method="post")
-                        .row
-                            .col-sm-2
-                                select#researchOption.form-control
-                                    option.entire(value='all') 전체
-                                    option.employeeName(value='empName') 직원명
-                                    option.employeeNum(value='empNum') 직원번호
-                                    option.projectName(value='projectName') 프로젝트명
-                            .col-sm-2
-                                input#inputInformation.searchInput(type='information')
-                            .col-sm-1
-                                button#search.searchNav(type='button' value='inquiry' title='inquiry') 조회
-                            .col-sm-4
-                            .col-sm-3
-                                button#goodEmpAdd.selectButton(type='button' value='good_employee_add' title='good_employee_add') 우수직원선정
-                                button#goodEmpDelete.cancellButton(type='button' value='good_employee_delete' title='good_employee_delete') 우수직원취소
-                    br
-                table.table.table-bordered
-                    thead
-                        tr  
-                            th check
-                            th 직원명
-                            th 프로젝트명
-                            th 동료평가
-                            th PM평가
-                            th 고객평가
-                            th 총합
-                            th 평균
-                    tbody#tbody
-                                               
+	.container
+		.table-responsive
+			.table-wrapper
+				.table-title
+					form(action=`/eval/result`, method="post")
+						.row
+							.col-sm-2
+								select#researchOption.form-control(name='type')
+									option.entire(value='all') 전체
+									option.employeeName(value='empName') 직원명
+									option.employeeNum(value='empNum') 직원번호
+									option.projectName(value='projectNum') 프로젝트 번호
+							.col-sm-2
+								input#inputInformation.searchInput(type='information', name='search')
+							.col-sm-1
+								button.btn.btn-dark(type='submit' value='inquiry' title='inquiry') 조회
+							.col-sm-4
+							.col-sm-3.mb-3.text-right
+								button.btn.btn-outline-dark(type='submit' form='best-employee-form') 이달의 직원 선정/취소
 
-    script(src='https://unpkg.com/axios/dist/axios.min.js')
-    script(src="/evaluation_result.js")
+							
+				table.table.table-bordered
+					thead
+						tr  
+							th 직원 사번
+							th 직원 이름
+							th 프로젝트 번호
+							th 프로젝트 이름
+							th 동료평가
+							th PM평가
+							th 고객평가
+							th 총합
+							th 평균
+							th SELECT
+							th CANCLE
+					tbody
+						form(action=`/eval/result/best-employee`, method="post", id="best-employee-form")
+						each result in results 
+							tr 
+								if(result[9] == 'best')
+									td 
+										= result[0]
+										span.badge.bg-danger.ml-2 이달의 직원
+								else 
+									td= result[0] 
+								td= result[1] 
+								td= result[2]
+								td= result[3]
+								td= result[4]
+								td= result[5]
+								td= result[6]
+								td= result[7]
+								td= result[8]
+								td
+									input.form-check-input.ml-3.checked(type="checkbox" form='best-employee-form' name='select' value=`${result[0]}`)
+								td 
+									if(result[9] == 'best')
+										input.form-check-input.ml-4.checked(type="checkbox" form='best-employee-form' name='cancle' value=`${result[0]}`)
+					

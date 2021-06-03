@@ -3,26 +3,25 @@ extends ../layout
 //- 새로운 프로젝트 생성
 block content
   .container 
-    form(action="/management/evaluation/register", method="post")
-      h1.text-center-mb-5 평가 항목 등록하기
-
-        .form-group
-            .row.align-items-center.mt-4
+    h1.text-center.mb-5.mt-5 평가 항목 등록하기
+    form(action="/eval/register/item", method="post")
+      .form-group
+          .row.align-items-center.mt-4
+            .col
+              h3 평가 종류
+              select.form-control(name="type", size="1")
+                option(value='동료') 동료 평가
+                option(value='PM') PM 평가
+                option(value='고객') 고객 평가
+          .row.align-items-center
+              .col.mt-4
+              h3 항목 내용
+              input.form-control(type="text", placeholder="업무 수행 평가", name="title")
+          .row.align-items-center.mt-4
               .col
-                h3 평가 종류
-                select.form-control(name="type", size="1")
-                  option(value='동료') 동료 평가
-                  option(value='PM') PM 평가
-                  option(value='고객') 고객 평가
-            .row.align-items-center
-                .col.mt-4
-                h3 항목 내용
-                input.form-control(type="text", placeholder="업무 수행 평가", name="title")
-            .row.align-items-center.mt-4
-                .col
-                h3 항목 예시
-                input.form-control(type="text", placeholder="고객의 요구사항을 다 만족함", name="example")
-                    
-            .row.justify-content-start.mt-4
-                .col(style="margin-bottom: 1em")
-                button.btn.btn-outline-success(type="submit", style="float: right") 평가항목 등록하기
+              h3 항목 예시
+              input.form-control(type="text", placeholder="고객의 요구사항을 다 만족함", name="example")
+                  
+          .row.justify-content-start.mt-4
+              .col(style="margin-bottom: 1em")
+              button.btn.btn-outline-success(type="submit", style="float: right") 평가항목 등록하기

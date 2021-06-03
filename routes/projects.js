@@ -1,20 +1,20 @@
 var express = require('express');
+var router = express.Router();
+const Sequelize = require('sequelize');
 var Participation = require('../models/participation');
 var Project = require('../models/project');
 var Customer = require('../models/customer');
 var Employee = require('../models/employee');
 var EmpSkill = require('../models/emp_skill');
 var Task = require('../models/task');
-const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
 
 
 const catchErrors = require('../lib/async-error');
-var router = express.Router();
 
-// 경영진 권한에게 프로젝트 페이지를 보여줌. -> index.pug
+// 경영진 권한에게 프로젝트 페이지를 보여줌.
 router.get('/index', catchErrors(async (req, res, next) => {
   res.render('project/index');
 }));

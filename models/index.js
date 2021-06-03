@@ -17,7 +17,7 @@ const PeerEvaluationResult = require('./peer_evaluation_result');
 const CustomerEvaluationResult = require('./customer_evaluation_result');
 const BestEmployee = require('./best_employee');
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'production';
 const config = require('../config/config.json')[env];
 const db = {};
 

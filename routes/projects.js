@@ -10,9 +10,16 @@ var Task = require('../models/task');
 const Op = Sequelize.Op;
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
-
-
 const catchErrors = require('../lib/async-error');
+
+function isValidDate(start, end) {
+  var start_date = new Date(start);
+  var end_date = new Date(end);
+  if(start_date > end_date){
+    return false;
+  }
+  return true;
+}
 
 // 경영진 권한에게 프로젝트 페이지를 보여줌.
 router.get('/index', catchErrors(async (req, res, next) => {
@@ -328,6 +335,33 @@ router.get("/finish", catchErrors(async (req, res, next) => {
   res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
 }));
 
+router.post("/search", catchErrors(async (req, res, next) => {
+  if(!isValidDate(req.body.start, req.body.end)){
+    req.flash('danger', '시작 일자가 종료 일자보다 앞설 수 없습니다.');
+    return res.redirect('/projects/list');
+  }
+
+  const projects = await Project.findAll({
+    where: {
+      [Op.or] : [
+        {
+          end_date: {
+            [Op.gte]: req.body.start,
+            [Op.lte]: req.body.end
+          }
+        },
+        {
+          start_date: {
+            [Op.lte]: req.body.end
+          }
+        }
+      ]
+    }
+  });
+
+  res.render("project/list", { projects: projects });
+}));
+
 async function getEmployeesWithSkill(skillList) {
   // 직원 리스트 선언
   let empList = [];
@@ -375,13 +409,13 @@ async function sendMail(customer) {
     service: 'gmail',
     host: 'smtp.gmail.com',
     auth: {
-      user: 'project@email.com',
-      pass: ''
+      user: 'mju.databaseproject.2021@gmail.com',
+      pass: 'qwerty123456^^'
     }
   }));
    
   var mailOptions = {
-    from: "project@email.com",
+    from: "mju.databaseproject.2021@gmail.com",
     to: customer.e_mail,
     subject: '[Prompt Solution] 고객 평가를 위한 인증키 메일',
     text: `인증키: ${customer.auth_key}`
@@ -395,7 +429,5 @@ async function sendMail(customer) {
     }
   }); 
 }
-
-
 
 module.exports = router;

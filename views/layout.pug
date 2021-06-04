@@ -53,7 +53,9 @@ html
     block navbar
       if (currentUser)
         include ./includes/navbar
-      else 
+      else if (currentCustomer)
+        include ./includes/navbar
+      else
         include ./includes/navbar_init
 
     block content

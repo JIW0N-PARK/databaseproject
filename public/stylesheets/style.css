@@ -26,3 +26,7 @@ img.card-img{
   padding-top: 20px;
   padding-bottom: 20px;
 }
+
+.toast-container {
+  z-index: 1001;
+}

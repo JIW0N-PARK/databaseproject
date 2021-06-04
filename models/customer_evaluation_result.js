@@ -9,7 +9,7 @@ module.exports = class CustomerEvaluationResult extends Sequelize.Model {
         autoIncrement: true,
         primaryKey: true,
       },
-      evaluator_emp_no: {
+      customer_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },

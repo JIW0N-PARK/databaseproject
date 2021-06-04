@@ -4,7 +4,7 @@ extends ../layout
 block content
   .container
     form(action="/detailEmployee", method="post")
-    h1.text-center.mt-5 직원 Information
+    h1.text-center.mt-5 직원 정보
 
     div.card-group 
         .card
@@ -31,9 +31,9 @@ block content
                         strong= skill.skill_name
                 
                 if(authorization == 1)
-                    a.btn.btn-outline-danger.mr-3(href=`/employee/delete/${employee.emp_no}?_method=DELETE`) 직원 삭제
+                    a.btn.btn-outline-dark.mr-3(href=`/employee/delete/${employee.emp_no}?_method=DELETE`) 직원 삭제
                  
                     if(employee.authorization_no == 0)
-                        a.btn.btn-outline-warning(href=`/employee/setAuthorization/${employee.emp_no}?_method=PUT`) 경영진 권한 부여하기
+                        a.btn.btn-outline-dark(href=`/employee/setAuthorization/${employee.emp_no}?_method=PUT`) 경영진 권한 부여하기
 
                 a.btn.btn-outline-dark(href="/employee/inquiry" class="btn btn-outline-dark" style="float: right") List로 돌아가기

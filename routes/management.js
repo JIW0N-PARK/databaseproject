@@ -79,7 +79,7 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
   }
 
   req.flash('success', '정상적으로 등록되었습니다.');
-  res.render('management/index');
+  res.redirect('/management/index');
 }));
 
 router.get('/project/edit/:project_no', catchErrors(async (req, res, next) => {

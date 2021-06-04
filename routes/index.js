@@ -15,10 +15,7 @@ function generateHash(password) {
 }
 
 function comparePassword(password, hash) {
-  bcrypt.compare(password, hash, function(err, result) {
-		console.log(result);
-		return result;
-	});
+  return bcrypt.compare(password, hash);
 }
 
 function getMonth() {
@@ -103,8 +100,13 @@ router.route("/signin")
 				req.flash("danger", "존재하지 않는 ID 입니다.");
 				return res.redirect("/signin");
 			}
+			console.log('before checkPWD');
 
-			if(comparePassword(req.body.password, user.PWD)==false) {
+			var checkPWD = await comparePassword(req.body.password, user.PWD);
+
+			console.log('after checkPWD');
+
+			if(!checkPWD) {
 				req.flash("danger", "비밀번호가 맞지 않습니다.");
 				return res.redirect("/signin");
 			}
@@ -234,7 +236,34 @@ router.get('/mypage/edit', catchErrors(async (req, res, next) => {
 }));
 
 router.put('/mypage/:id', catchErrors(async (req, res, next) => {
-	res.render('mypage/editProfile',{});
+	const employee = await Employee.findOne({ 
+		where: {emp_no: req.params.id},
+	});
+
+	const emp_skill = await EmpSkill.findAll({
+		where: {emp_no: req.params.id}
+	});
+
+	for(let skill of emp_skill){
+		await skill.destroy();
+	}
+
+	var password = await generateHash(req.body.password);
+
+	employee.name = req.body.name;
+	employee.PWD = password;
+	employee.education = req.body.education;
+
+	for(let skill of req.body.skills) {
+		await EmpSkill.create({
+			emp_no: req.params.id,
+			skill_no: skill
+		});
+	}
+
+	await employee.save();
+	req.flash('success', '정상적으로 수정되었습니다.');
+	res.redirect('/mypage');
 }));
 
 router.post('/signin/customer', catchErrors(async (req, res, next) => {

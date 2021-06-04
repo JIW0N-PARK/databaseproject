@@ -237,9 +237,6 @@ router.get('/result', catchErrors(async (req, res, next) => {
         peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
         evaluationResult.push(peer_evaluation_score + "점");
     }
-    else {
-        evaluationResult.push("평가 미완료");
-    }
 
     // PM 평가 점수 추가
     let pm_sum = 0;
@@ -259,9 +256,6 @@ router.get('/result', catchErrors(async (req, res, next) => {
         pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
         evaluationResult.push(pm_evaluation_score + "점");
     }
-    else {
-        evaluationResult.push("평가 미완료");
-    }
 
     // 고객 평가 점수 추가
     let customer_sum = 0;
@@ -280,9 +274,6 @@ router.get('/result', catchErrors(async (req, res, next) => {
         }
         customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
         evaluationResult.push(customer_evaluation_score + "점");
-    }
-    else {
-        evaluationResult.push("평가 미완료");
     }
 
     // 총합 점수 추가
@@ -360,9 +351,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
           peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
           evaluationResult.push(peer_evaluation_score + "점");
       }
-      else {
-          evaluationResult.push("평가 미완료");
-      }
 
       // PM 평가 점수 추가
       let pm_sum = 0;
@@ -382,9 +370,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
           pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
           evaluationResult.push(pm_evaluation_score + "점");
       }
-      else {
-          evaluationResult.push("평가 미완료");
-      }
 
       // 고객 평가 점수 추가
       let customer_sum = 0;
@@ -403,9 +388,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
           }
           customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
           evaluationResult.push(customer_evaluation_score + "점");
-      }
-      else {
-          evaluationResult.push("평가 미완료");
       }
   
       // 총합 점수 추가
@@ -502,9 +484,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
           peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
           evaluationResult.push(peer_evaluation_score + "점");
       }
-      else {
-          evaluationResult.push("평가 미완료");
-      }
 
       // PM 평가 점수 추가
       let pm_sum = 0;
@@ -524,9 +503,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
           pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
           evaluationResult.push(pm_evaluation_score + "점");
       }
-      else {
-          evaluationResult.push("평가 미완료");
-      }
 
       // 고객 평가 점수 추가
       let customer_sum = 0;
@@ -545,9 +521,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
           }
           customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
           evaluationResult.push(customer_evaluation_score + "점");
-      }
-      else {
-          evaluationResult.push("평가 미완료");
       }
   
       // 총합 점수 추가
@@ -626,9 +599,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
             peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
             evaluationResult.push(peer_evaluation_score + "점");
         }
-        else {
-            evaluationResult.push("평가 미완료");
-        }
 
         // PM 평가 점수 추가
         let pm_sum = 0;
@@ -647,9 +617,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
             }
             pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
             evaluationResult.push(pm_evaluation_score + "점");
-        }
-        else {
-            evaluationResult.push("평가 미완료");
         }
 
         // 고객 평가 점수 추가
@@ -750,9 +717,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
             peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
             evaluationResult.push(peer_evaluation_score + "점");
         }
-        else {
-            evaluationResult.push("평가 미완료");
-        }
 
         // PM 평가 점수 추가
         let pm_sum = 0;
@@ -772,9 +736,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
             pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
             evaluationResult.push(pm_evaluation_score + "점");
         }
-        else {
-            evaluationResult.push("평가 미완료");
-        }
 
         // 고객 평가 점수 추가
         let customer_sum = 0;
@@ -793,9 +754,6 @@ router.post('/result/', catchErrors(async (req, res, next) => {
             }
             customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
             evaluationResult.push(customer_evaluation_score + "점");
-        }
-        else {
-            evaluationResult.push("평가 미완료");
         }
     
         // 총합 점수 추가

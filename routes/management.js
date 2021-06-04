@@ -82,7 +82,7 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
   res.redirect('/management/index');
 }));
 
-router.get('/project/edit/:project_no', catchErrors(async (req, res, next) => {
+router.get('/project/:project_no/edit', catchErrors(async (req, res, next) => {
   const customers = await Customer.findAll();
   const marketing = await Employee.findAll({ where: { dept_no: 1 } });
   const research = await Employee.findAll({ where: { dept_no: 2 } });
@@ -104,8 +104,14 @@ router.get('/project/edit/:project_no', catchErrors(async (req, res, next) => {
     customers: customers, marketing: marketing, research: research, business: business, development: development });
 }));
 
-router.post('/project/edit/:project_no', catchErrors(async (req, res, next) => {
+router.put('/project/:project_no', catchErrors(async (req, res, next) => {
   const project = await Project.findOne({ where: {project_no: req.params.project_no} });
+
+  if(!isValidDate(req.body.start, req.body.end)){
+    req.flash('danger', '시작 일자가 종료 일자보다 앞설 수 없습니다.');
+    return res.redirect('/projects/index');
+  }
+
   project.project_name = req.body.name;
   project.start_date = req.body.start;
   project.end_date = req.body.end;
@@ -136,7 +142,7 @@ router.post('/project/edit/:project_no', catchErrors(async (req, res, next) => {
     }
   }
   req.flash("success", "성공적으로 수정되었습니다.");
-  res.render('management/index');
+  res.redirect('/projects/list');
 }));
 
 router.get('/project/delete/:project_no', catchErrors(async (req, res, next) => {

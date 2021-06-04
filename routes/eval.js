@@ -439,9 +439,9 @@ router.post('/result/', catchErrors(async (req, res, next) => {
     var allEvaluationList = [];
 
     const employees = await Employee.findAll({
-        where: {
-            name: req.body.search
-        }
+      where: {
+        name: req.body.search
+      }
     });
 
     if(employees.length == 0) {
@@ -452,126 +452,128 @@ router.post('/result/', catchErrors(async (req, res, next) => {
     var participations = [];
 
     for(let employee of employees) {
-        const participation = await Participation.findOne({
-            where : {
-              emp_no: employee.emp_no
-            }
-        });
-        participations.push(participation);
+      const participation = await Participation.findAll({
+        where : {
+          emp_no : employee.emp_no
+        }
+      });
+      participations.push(participation);
     }
+
+    participations = participations[0];
 
     //각각의 프로젝트 참여자에 대한 list 생성
     for(let i=0; i<participations.length; i++) {
-        let evaluationResult = [];
+      let evaluationResult = [];
 
-        // 직원 이름 추가
-        const employee = await Employee.findOne({
+      // 직원 이름 추가
+      const employee = await Employee.findOne({
+        where: {
+          emp_no: participations[i].emp_no
+        },
+      });
+      evaluationResult.push(employee.emp_no);
+      evaluationResult.push(employee.name);
+  
+      // 프로젝트 이름 추가
+      const project = await Project.findOne({
           where: {
-            emp_no: participations[i].emp_no
+            project_no: participations[i].project_no
           },
-        });
-        evaluationResult.push(employee.emp_no);
-        evaluationResult.push(employee.name);
-    
-        // 프로젝트 이름 추가
-        const project = await Project.findOne({
-            where: {
-              project_no: participations[i].project_no
-            },
-        });
-        evaluationResult.push(project.project_no);
-        evaluationResult.push(project.project_name);
+      });
+      evaluationResult.push(project.project_no);
+      evaluationResult.push(project.project_name);
 
-        // 동료 평가 점수 추가
-        let peer_sum = 0;
-        const peer_eval = await PeerEvaluationResult.findAll({
-            where: {
-                non_evaluator_emp_no: participations[i].emp_no,
-                project_no: participations[i].project_no,
-            }
-        });
+      // 동료 평가 점수 추가
+      let peer_sum = 0;
+      const peer_eval = await PeerEvaluationResult.findAll({
+          where: {
+              non_evaluator_emp_no: participations[i].emp_no,
+              project_no: participations[i].project_no,
+          }
+      });
 
-        let peer_evaluation_score = 0;
-        if(peer_eval.length != 0) {
-            for(let j=0; j<peer_eval.length; j++) {
-                if(peer_eval[j] != null)
-                peer_sum += peer_eval[j].score;
-            }
-            peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
-            evaluationResult.push(peer_evaluation_score + "점");
+      let peer_evaluation_score = 0;
+      if(peer_eval.length != 0) {
+          for(let j=0; j<peer_eval.length; j++) {
+              if(peer_eval[j] != null)
+              peer_sum += peer_eval[j].score;
+          }
+          peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
+          evaluationResult.push(peer_evaluation_score + "점");
+      }
+      else {
+          evaluationResult.push("평가 미완료");
+      }
+
+      // PM 평가 점수 추가
+      let pm_sum = 0;
+      const pm_eval = await PmEvaluationResult.findAll({
+          where: {
+              non_evaluator_emp_no: participations[i].emp_no,
+              project_no: participations[i].project_no,
+          }
+      });
+
+      let pm_evaluation_score = 0;
+      if(pm_eval.length != 0) {
+          for(let j=0; j<pm_eval.length; j++) {
+              if(pm_eval[j] != null)
+              pm_sum += pm_eval[j].score;
+          }
+          pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
+          evaluationResult.push(pm_evaluation_score + "점");
+      }
+      else {
+          evaluationResult.push("평가 미완료");
+      }
+
+      // 고객 평가 점수 추가
+      let customer_sum = 0;
+      const customer_eval = await CustomerEvaluationResult.findAll({
+          where: {
+              non_evaluator_emp_no: participations[i].emp_no,
+              project_no: participations[i].project_no,
+          }
+      });
+
+      let customer_evaluation_score = 0;
+      if(customer_eval.length != 0) {
+          for(let j=0; j<customer_eval.length; j++) {
+              if(customer_eval[j] != null)
+                  customer_sum += customer_eval[j].score;
+          }
+          customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
+          evaluationResult.push(customer_evaluation_score + "점");
+      }
+      else {
+          evaluationResult.push("평가 미완료");
+      }
+  
+      // 총합 점수 추가
+      evaluationResult.push(Math.round(peer_evaluation_score + pm_evaluation_score + customer_evaluation_score) + "점");
+
+      // 평균 추가
+      evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점");
+      
+      // 이달의 직원 check
+      var currentMonth = getMonth();
+      const best = await BestEmployee.findOne({
+        where: {
+          emp_no: participations[i].emp_no,
+          month: currentMonth
         }
-        else {
-            evaluationResult.push("평가 미완료");
-        }
+      });
+      if(best){
+        evaluationResult.push("best");
+      }
+      else{
+        evaluationResult.push("0");
+      }
 
-        // PM 평가 점수 추가
-        let pm_sum = 0;
-        const pm_eval = await PmEvaluationResult.findAll({
-            where: {
-                non_evaluator_emp_no: participations[i].emp_no,
-                project_no: participations[i].project_no,
-            }
-        });
-
-        let pm_evaluation_score = 0;
-        if(pm_eval.length != 0) {
-            for(let j=0; j<pm_eval.length; j++) {
-                if(pm_eval[j] != null)
-                pm_sum += pm_eval[j].score;
-            }
-            pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
-            evaluationResult.push(pm_evaluation_score + "점");
-        }
-        else {
-            evaluationResult.push("평가 미완료");
-        }
-
-        // 고객 평가 점수 추가
-        let customer_sum = 0;
-        const customer_eval = await CustomerEvaluationResult.findAll({
-            where: {
-                non_evaluator_emp_no: participations[i].emp_no,
-                project_no: participations[i].project_no,
-            }
-        });
-
-        let customer_evaluation_score = 0;
-        if(customer_eval.length != 0) {
-            for(let j=0; j<customer_eval.length; j++) {
-                if(customer_eval[j] != null)
-                    customer_sum += customer_eval[j].score;
-            }
-            customer_evaluation_score = Math.round(customer_sum/customer_eval.length);
-            evaluationResult.push(customer_evaluation_score + "점");
-        }
-        else {
-            evaluationResult.push("평가 미완료");
-        }
-    
-        // 총합 점수 추가
-        evaluationResult.push(Math.round(peer_evaluation_score + pm_evaluation_score + customer_evaluation_score) + "점");
-
-        // 평균 추가
-        evaluationResult.push(Math.round((peer_evaluation_score + pm_evaluation_score + customer_evaluation_score)/3) + "점");
-				
-				// 이달의 직원 check
-				var currentMonth = getMonth();
-				const best = await BestEmployee.findOne({
-					where: {
-						emp_no: participations[i].emp_no,
-						month: currentMonth
-					}
-				});
-				if(best){
-					evaluationResult.push("best");
-				}
-				else{
-					evaluationResult.push("0");
-				}
-
-        // 평가 정보 리스트 전달
-        if(evaluationResult.length == 10)
-            allEvaluationList.push(evaluationResult);
+      // 평가 정보 리스트 전달
+      if(evaluationResult.length == 10)
+          allEvaluationList.push(evaluationResult);
     }
     return res.render('management/evaluationResult_inquiry', { results: allEvaluationList });
   }

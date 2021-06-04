@@ -3,26 +3,25 @@ extends ../layout
 //- 프로젝트 수정
 block content
   .container 
-    form(action=`/management/project/edit/${project.project_no}`, method="post")
-      h1.text-center-mt-5 프로젝트 수정
-
+    h1.text-center.mt-5 프로젝트 수정
+    form(action=`/management/project/${project.project_no}?_method=PUT`, method="post")
         .form-group
             .row.align-items-center
                 .col.mt-4
                 h3 프로젝트명
-                input.form-control(type="text", value=`${project.project_name}`, name="name")
+                input.form-control(type="text", value=`${project.project_name}`, name="name" required)
             .row.align-items-center.mt-4
                 .col
                 h3 착수일자
-                input.form-control(type="date", value=`${project.start_date}`, name="start")
+                input.form-control(type="date", value=`${project.start_date}`, name="start" required)
             .row.align-items-center.mt-4
                 .col
                 h3 종료일자
-                input.form-control(type="date", value=`${project.end_date}`, name="end")
+                input.form-control(type="date", value=`${project.end_date}`, name="end" required)
             .row.align-items-center.mt-4
                 .col
                 h3 거래처
-                select.form-control(name="customer", size="1")
+                select.form-control(name="customer", size="1" required)
                     each customer in customers 
                         if(customer.customer_id != project.Customer.customer_id)
                             option(value=`${customer.customer_id}`)= customer.customer_name
@@ -31,11 +30,11 @@ block content
             .row.align-items-center.mt-4
                 .col
                 h3 프로젝트 상세설명
-                input.form-control(type="text", value=`${project.description}`, name="description")
+                input.form-control(type="text", value=`${project.description}`, name="description" required)
             .row.align-items-center.mt-4
                 .col 
                 h3 프로젝트 진행상태
-                select.form-control(name="state", size = "1")
+                select.form-control(name="state", size = "1" required)
                     option(value="진행중") 진행중
                     option(value="보류") 보류
                     option(value="종료") 종료
@@ -81,4 +80,4 @@ block content
                                                 label.form-check-label(for=`inlineCheckbox${employee.emp_no}`)= employee.name
             .row.justify-content-start.mt-4
                 .col(style="margin-bottom: 1em")
-                button.btn.btn-outline-dark(type="submit", style="float: right") Project Modify
+                button.btn.btn-outline-dark(type="submit", style="float: right") 프로젝트 수정하기

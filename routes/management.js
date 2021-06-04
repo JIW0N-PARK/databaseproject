@@ -38,7 +38,7 @@ router.post('/customer/register', catchErrors(async (req, res, next) => {
     e_mail: req.body.email
   });
   req.flash("success", "정상적으로 등록되었습니다.");
-  res.redirect('/');
+  res.redirect('/management');
 }));
 
 router.get('/project/register', catchErrors(async (req, res, next) => {
@@ -145,7 +145,7 @@ router.put('/project/:project_no', catchErrors(async (req, res, next) => {
   res.redirect('/projects/list');
 }));
 
-router.get('/project/delete/:project_no', catchErrors(async (req, res, next) => {
+router.delete('/project/:project_no', catchErrors(async (req, res, next) => {
   const project = await Project.findOne({
     where: { project_no: req.params.project_no },
     include: [
@@ -166,7 +166,8 @@ router.get('/project/delete/:project_no', catchErrors(async (req, res, next) => 
 
   await project.destroy();
 
-  res.render('management/index');
+  req.flash("success", "성공적으로 삭제되었습니다.");
+  res.redirect('/projects/list');
 }));
 
 router.get('/project/search', catchErrors(async (req, res, next) => {
@@ -270,14 +271,14 @@ router.put('/customer/:id', catchErrors(async (req, res, next) => {
   customer.e_mail = req.body.email;
   await customer.save();
   req.flash('success', "성공적으로 수정되었습니다.");
-  res.render('management/index');
+  res.redirect('/management');
 }));
 
 router.delete('/customer/:id', catchErrors(async (req, res, next) => {
   const customer = await Customer.findOne({ where: { customer_id: req.params.id}});
   await customer.destroy();
   req.flash('success', "성공적으로 삭제되었습니다.");
-  res.render('management/index');
+  res.redirect('/management');
 }));
 
 module.exports = router;

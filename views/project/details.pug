@@ -31,7 +31,7 @@ block content
           
             if(authorization == 1)
               a.btn.btn-outline-dark(href=`/management/project/${project_info.project_no}/edit`) 프로젝트 수정</a>
-              a.btn.btn-outline-dark(href=`/management/project/${project_info.project_no}/delete`) 프로젝트 삭제</a>
+              a.btn.btn-outline-dark(href=`/management/project/${project_info.project_no}?_method=DELETE`) 프로젝트 삭제</a>
             a(href="/projects/list" class="btn btn-outline-dark" style="float: right") List로 돌아가기
             
       script(src='https://unpkg.com/axios/dist/axios.min.js')

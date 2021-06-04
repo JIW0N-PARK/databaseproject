@@ -53,10 +53,10 @@ window.onload = function () {
         const result = await axios.post('/projects/addTask', { title, content, start_date, end_date, option, emp_no, project_no });
 
         if(result.data == true) {
-            alert('성공적으로 평가를 마쳤습니다!');
+            alert('성공적으로 업무를 추가했습니다!');
             window.location.replace('/');
         } else {
-            alert('평가가 서버에 저장되지 않았습니다.');
+            alert('업무가 서버에 저장되지 않았습니다.');
         }
     });
 };

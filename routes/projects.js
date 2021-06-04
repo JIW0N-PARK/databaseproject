@@ -10,7 +10,6 @@ const Op = Sequelize.Op;
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
 
-
 const catchErrors = require('../lib/async-error');
 var router = express.Router();
 
@@ -375,13 +374,13 @@ async function sendMail(customer) {
     service: 'gmail',
     host: 'smtp.gmail.com',
     auth: {
-      user: 'project@email.com',
-      pass: ''
+      user: 'mju.databaseproject.2021@gmail.com',
+      pass: 'qwerty123456^^'
     }
   }));
    
   var mailOptions = {
-    from: "project@email.com",
+    from: "mju.databaseproject.2021@gmail.com",
     to: customer.e_mail,
     subject: '[Prompt Solution] 고객 평가를 위한 인증키 메일',
     text: `인증키: ${customer.auth_key}`
@@ -395,7 +394,5 @@ async function sendMail(customer) {
     }
   }); 
 }
-
-
 
 module.exports = router;

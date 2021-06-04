@@ -100,11 +100,8 @@ router.route("/signin")
 				req.flash("danger", "존재하지 않는 ID 입니다.");
 				return res.redirect("/signin");
 			}
-			console.log('before checkPWD');
 
 			var checkPWD = await comparePassword(req.body.password, user.PWD);
-
-			console.log('after checkPWD');
 
 			if(!checkPWD) {
 				req.flash("danger", "비밀번호가 맞지 않습니다.");

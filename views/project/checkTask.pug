@@ -6,7 +6,7 @@ block content
     form(action="#", method="post")
       h1.text-center.mt-5.mb-5 프로젝트 진행 사항
 
-      p(style="font-size: 24px") 착수 일자에 따른 진행 사항
+      p(style="font-size: 24px") 총 업무에 대한 진행 사항
           .progress
               div.progress-bar.progress-bar-striped(role="progressbar" style=`width: ${projectPercent}%` aria-valuenow=`${projectPercent}` aria-valuemin="0" aria-valuemax="100") #{projectPercent}
 
@@ -14,7 +14,7 @@ block content
       .card.mt-3
         .card-body
           h5.card-title= currentUser.name
-          p.card-text 본인의 업무에 따른 진행 사항
+          p.card-text 본인의 업무에 대한 진행 사항
           .progress
               div.progress-bar.progress-bar-striped.bg-success(role="progressbar" style=`width: ${employeePercent}%` aria-valuenow=`${employeePercent}` aria-valuemin="0" aria-valuemax="100") #{employeePercent}
 

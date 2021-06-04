@@ -7,7 +7,7 @@ block content
 
     if(end_state_projects[0])
       for project in end_state_projects
-        form#grantKeyForm(action="/", method="post")
+        form#grantKeyForm(action=`/projects/finish/${project.project_no}`, method="post")
           .card-group
             .card.mb-3
               .card-body 
@@ -21,10 +21,14 @@ block content
                 p.mb-5#end_date= project.end_date
                 h5 상태
                 p.mb-5#state= project.state
+                h5 고객 이름
+                p.mb-5#customer_name= project.Customer.customer_name
                 h5 고객 번호
                 p.mb-5#customer_id= project.customer_id
-                h5 PM 사번
-                p.mb-5#PM= project.pm_no
+                each employee in project.Employees 
+                  if(employee.emp_no == project.pm_no)
+                    h5 PM 이름
+                    p.PM= employee.name
                 button.btn.btn-outline-dark(type="submit" style="float: right") 인증키 부여
     else 
       .card-group
@@ -52,8 +56,12 @@ block content
                 p.end_date= project.end_date
                 h6 상태
                 p.state= project.state
-                h6 PM 사번
-                p.PM= project.pm_no
+                h6 고객 이름
+                p#customer_id= project.Customer.customer_name
+                each employee in project.Employees 
+                  if(employee.emp_no == project.pm_no)
+                    h6 PM 이름
+                    p.PM= employee.name
                 button.btn.btn-outline-danger(type="submit" style="float: right" id="finish") 종료하기
     else 
       .card-group
@@ -62,6 +70,6 @@ block content
             h5 마감일자가 지난 프로젝트가 없습니다.
 
 
-  script(src='https://unpkg.com/axios/dist/axios.min.js')
-  script(src="/projectFinish.js")      
+  //- script(src='https://unpkg.com/axios/dist/axios.min.js')
+  //- script(src="/projectFinish.js")      
   

@@ -28,7 +28,7 @@ block content
         .row.align-items-center.mt-4
             .col
             h3 프로젝트 담당자(PM)
-            select.form-control(name="pm", size="1", form='registerForm')
+            select.form-control(id='pm' name="pm", size="1", form='registerForm')
                 each employee in employees
                     option(value=`${employee.emp_no}`)= employee.name
         .row.align-items-center.mt-4

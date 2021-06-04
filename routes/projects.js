@@ -249,18 +249,25 @@ router.get('/addTask/all/:project_no', catchErrors(async (req, res) => {
 }));
 
 // 
-router.post('/finish', catchErrors(async (req, res) => {
+router.post('/finish/:id', catchErrors(async (req, res) => {
+  const project = await Project.findOne({
+    where: {
+      project_no: req.params.id
+    }
+  });
   // 인증키 문자열 선언
   let grantKey = "";
   // req body 값 가져오기
-  let { project_no, customer_id, start_date } = req.body;
+  const project_no = project.project_no;
+  const customer_id = project.customer_id;
+  const start_date = project.start_date;
   
 
   // start_date값 쪼개기
-  start_date = new Date(start_date);
-  const year = start_date.getFullYear();
-  const month = start_date.getMonth() + 1;
-  const day = start_date.getDate();
+  let date = new Date(start_date);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
 
   const items = [project_no, customer_id, year, month, day];
   
@@ -299,23 +306,41 @@ router.post('/finish', catchErrors(async (req, res) => {
   // 고객 모델 가져오기
   const customer = await Customer.findOne({
     where: {
-      customer_id
+      customer_id: customer_id
     },
   });
   
   // 고객의 인증키 컬럼에 인증키 값 추가하기
-  customer.update({
+  await customer.update({
     auth_key: grantKey,
   });
   
   // 인증키에 대한 이메일 보내기
   sendMail(customer);
   
-  return res.send('true');
+  req.flash('success', '정상적으로 인증키가 부여되었습니다.');
+  return res.redirect('/projects/finish');
 }));
 
 router.get("/finish", catchErrors(async (req, res, next) => {
-  const end_state_projects = await Project.findAll({ where: { state: "종료" }});
+  const end_state_projects = await Project.findAll({ 
+    where: { 
+      state: "종료"
+    },
+    include: [
+      {
+        model: Customer,
+        where: {
+          auth_key : null
+        }
+      },
+      {
+        model: Employee
+      }
+    ]
+  });
+
+  console.log(end_state_projects[0]);
 
   var today = new Date();
 
@@ -325,7 +350,15 @@ router.get("/finish", catchErrors(async (req, res, next) => {
       end_date: {
         [Op.lte]: today
       } 
-    }
+    },
+    include: [
+      {
+        model: Customer
+      },
+      {
+        model: Employee
+      }
+    ]
   });
   res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
 }));
@@ -413,7 +446,9 @@ async function sendMail(customer) {
     from: "mju.databaseproject.2021@gmail.com",
     to: customer.e_mail,
     subject: '[Prompt Solution] 고객 평가를 위한 인증키 메일',
-    text: `인증키: ${customer.auth_key}`
+    text: `
+    접속 URL: https://mju-databaseproject-2021.herokuapp.com/
+    인증키: ${customer.auth_key}`
   };
    
   transporter.sendMail(mailOptions, function(error, info){

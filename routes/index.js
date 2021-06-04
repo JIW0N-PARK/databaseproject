@@ -187,18 +187,20 @@ router.route("/signin")
 				});
 				taskList.push(tasks);
 			}
-
+			
 			if(taskList[0]){
-				for(let task of taskList[0]) {
-					const emp = await Employee.findOne({
-						where: task.emp_no
-					});
-	
-					const project = await Project.findOne({
-						where: task.project_no
-					});
-	
-					req.flash("danger", ` 😰'${project.project_name}' 프로젝트에서 '${task.title}' 업무를 부여 받은 '${emp.name}' 님이 업무 제출 기한이 지났지만 업무를 제출하지 않았습니다!😰 `);
+				for(let tasks of taskList) {
+					for(let task of tasks) {
+						const emp = await Employee.findOne({
+							where: task.emp_no
+						});
+		
+						const project = await Project.findOne({
+							where: task.project_no
+						});
+		
+						req.flash("danger", ` 😰'${project.project_name}' 프로젝트에서 '${task.title}' 업무를 부여 받은 '${emp.name}' 님이 업무 제출 기한이 지났지만 업무를 제출하지 않았습니다!😰 `);
+					}
 				}
 			}
 

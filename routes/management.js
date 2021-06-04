@@ -69,6 +69,15 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
     pm_no: req.body.pm
   });
 
+  if(!req.body.pm.includes(req.body.employee)){
+    await Participation.create({
+      emp_no: req.body.pm,
+      project_no: project.project_no,
+      participation_date: project.start_date,
+      participate: "Y"
+    });
+  }
+
   for(let employee of req.body.employee) {
     await Participation.create({
       emp_no: employee,
@@ -79,7 +88,7 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
   }
 
   req.flash('success', '정상적으로 등록되었습니다.');
-  res.redirect('/management/index');
+  res.redirect('/management/projects/index');
 }));
 
 router.get('/project/:project_no/edit', catchErrors(async (req, res, next) => {

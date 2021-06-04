@@ -18,7 +18,7 @@ async function setOnButtonListener() {
         if(result) {
             return alert("인증키를 성공적으로 부여했습니다!");
         } else {
-            return alert("인증키를 부여하지 못했습니다.")
+            return alert("인증키를 부여하지 못했습니다.");
         }
 
     });

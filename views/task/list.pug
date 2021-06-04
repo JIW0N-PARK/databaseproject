@@ -19,19 +19,19 @@ block content
               if(task.current_state == "end") 
                 h4.title.mb-5= task.title
                 if(type == 'project')
-                  h5 직원 번호
-                  p.emp_no= task.emp_no
+                  h5 직원 이름
+                  p.name= task.Employee.name
                 h5 프로젝트 번호
-                p.project_no= task.project_no
+                p.project_name= task.Project.project_name
                 h5 현재 상태
                 p.state= task.current_state
               else     
                 h4.title.mb-5= task.title
                 if(type == 'project')
                   h5 직원 번호
-                  p.emp_no= task.emp_no
-                h5 프로젝트 번호
-                p.project_no= task.project_no
+                  p.name= task.Employee.name
+                h5 프로젝트명
+                p.project_name= task.Project.project_name
                 h5 시작 일자
                 p.start_date= task.start_date
                 h5 종료 일자

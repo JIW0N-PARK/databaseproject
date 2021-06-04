@@ -197,7 +197,7 @@ router.get('/result', catchErrors(async (req, res, next) => {
   const participations = await Participation.findAll({});
 
   //각각의 프로젝트 참여자에 대한 list 생성
-  for(let i=0; i<5; i++) {
+  for(let i=0; i<participations.length; i++) {
     let evaluationResult = [];
 
     // 직원 이름 추가
@@ -236,6 +236,10 @@ router.get('/result', catchErrors(async (req, res, next) => {
         }
         peer_evaluation_score = Math.round(peer_sum/peer_eval.length);
         evaluationResult.push(peer_evaluation_score + "점");
+    }
+
+    if(project.pm_no == employee.emp_no) {
+      evaluationResult.push('PM');
     }
 
     // PM 평가 점수 추가
@@ -371,6 +375,10 @@ router.post('/result/', catchErrors(async (req, res, next) => {
           evaluationResult.push(pm_evaluation_score + "점");
       }
 
+      if(project.pm_no == employee.emp_no) {
+        evaluationResult.push('PM');
+      }
+
       // 고객 평가 점수 추가
       let customer_sum = 0;
       const customer_eval = await CustomerEvaluationResult.findAll({
@@ -504,6 +512,10 @@ router.post('/result/', catchErrors(async (req, res, next) => {
           evaluationResult.push(pm_evaluation_score + "점");
       }
 
+      if(project.pm_no == employee.emp_no) {
+        evaluationResult.push('PM');
+      }
+
       // 고객 평가 점수 추가
       let customer_sum = 0;
       const customer_eval = await CustomerEvaluationResult.findAll({
@@ -617,6 +629,10 @@ router.post('/result/', catchErrors(async (req, res, next) => {
             }
             pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
             evaluationResult.push(pm_evaluation_score + "점");
+        }
+
+        if(project.pm_no == employee.emp_no) {
+          evaluationResult.push('PM');
         }
 
         // 고객 평가 점수 추가
@@ -735,6 +751,10 @@ router.post('/result/', catchErrors(async (req, res, next) => {
             }
             pm_evaluation_score = Math.round(pm_sum/pm_eval.length);
             evaluationResult.push(pm_evaluation_score + "점");
+        }
+
+        if(project.pm_no == employee.emp_no) {
+          evaluationResult.push('PM');
         }
 
         // 고객 평가 점수 추가

@@ -80,7 +80,12 @@ router.get('/list', catchErrors(async (req, res, next) => {
 	const tasks = await Task.findAll({
 		where: {
 			emp_no : req.session.user.emp_no
-		}
+		},
+        include: [
+            {
+                model: Project
+            }
+        ]
 	});
 
 	res.render('task/list', {type: 'personal', tasks : tasks});
@@ -90,7 +95,15 @@ router.get('/list/all/:project_no', catchErrors(async (req, res, next) => {
 	const tasks = await Task.findAll({
 		where: {
 			project_no: req.params.project_no
-		}
+		},
+        include: [
+            {
+                model: Project
+            },
+            {
+                model: Employee
+            }
+        ]
 	});
 
 	res.render('task/list', {type: 'project', tasks : tasks});

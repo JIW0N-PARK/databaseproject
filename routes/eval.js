@@ -197,7 +197,7 @@ router.get('/result', catchErrors(async (req, res, next) => {
   const participations = await Participation.findAll({});
 
   //각각의 프로젝트 참여자에 대한 list 생성
-  for(let i=0; i<participations.length; i++) {
+  for(let i=0; i<5; i++) {
     let evaluationResult = [];
 
     // 직원 이름 추가

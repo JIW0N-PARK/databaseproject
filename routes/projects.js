@@ -28,34 +28,29 @@ router.get('/index', catchErrors(async (req, res, next) => {
 
 // 사용자가 project List를 조회할 때 요청 -> list.pug
 router.get('/list', catchErrors(async (req, res) => {
-  // 경영진의 권한을 가진 이에게는 모든 project에 대한 리스트를 줌
-  if(req.session.authorization == 1) {
-    const projects = await Project.findAll({});
-    return res.render('project/list', { projects: projects });
-  }
-  
-  // 일반 권한을 가진 직원에게는 참여하고 있는 project에 대한 리스트만 줌
-  else {
-    let projects = [];
-    const participations = await Participation.findAll({
+  let projects = [];
+  const participations = await Participation.findAll({
+    where: {
+      emp_no: req.session.user.emp_no,
+    },
+  });
+
+  for(let i=0; i<participations.length; i++) {
+    const project = await Project.findOne({
       where: {
-        emp_no: req.session.user.emp_no,
+        project_no: participations[i].project_no,
       },
     });
-
-    for(let i=0; i<participations.length; i++) {
-      const project = await Project.findOne({
-        where: {
-          project_no: participations[i].project_no,
-        },
-      });
-      projects.push(project);
-    }
-
-    console.log(projects);
-
-    return res.render('project/list', { projects: projects });
+    projects.push(project);
   }
+
+  return res.render('project/list', { projects: projects });
+}));
+
+// 모든 프로젝트 조회
+router.get('/list/all', catchErrors(async (req, res) => {
+  const projects = await Project.findAll({});
+  return res.render('project/list', { projects: projects });
 }));
 
 // project detail에 대한 요청 -> details.pug

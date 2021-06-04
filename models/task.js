@@ -27,6 +27,9 @@ module.exports = class Task extends Sequelize.Model {
             submit_file: {
                 type: Sequelize.ENUM(['문서', '엑셀', 'Html/Javascript', 'C#/C/C++', 'Dart/Flutter/Java', 'Python']),
             },
+            submit_url: {
+                type: Sequelize.TEXT
+            }
 
         }, {
             sequelize,

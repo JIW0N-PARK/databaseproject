@@ -1,0 +1,52 @@
+extends ../layout 
+
+//- 프로젝트 list 확인
+block content
+  .container
+    if(type == 'personal')
+      h1.text-center.mt-5.mb-5 내 업무 목록
+    else 
+      h1.text-center.mt-5.mb-5 프로젝트 내 업무 목록
+
+    //- if(authorization == 1)
+    //-   a.btn.btn-outline-dark(href=`/task/list/all`) 모든 업무 보기
+
+    if(tasks[0])
+      each task in tasks
+        .card-group
+          .card.pt-3.mb-2 
+            .card-body
+              if(task.current_state == "end") 
+                h4.title.mb-5= task.title
+                if(type == 'project')
+                  h5 직원 번호
+                  p.emp_no= task.emp_no
+                h5 프로젝트 번호
+                p.project_no= task.project_no
+                h5 현재 상태
+                p.state= task.current_state
+              else     
+                h4.title.mb-5= task.title
+                if(type == 'project')
+                  h5 직원 번호
+                  p.emp_no= task.emp_no
+                h5 프로젝트 번호
+                p.project_no= task.project_no
+                h5 시작 일자
+                p.start_date= task.start_date
+                h5 종료 일자
+                p.end_date= task.end_date
+                h5 업무 내용
+                p.content= task.content
+                h5 현재 상태
+                p.state= task.current_state
+                if(type == 'personal')
+                  if(task.current_state == "uncheck")
+                    a.btn.btn-outline-dark(href=`/task/check/${task.id}?_method=PUT` style="float: right") 업무 확인
+                  else if(task.current_state == "progress")
+                    a.btn.btn-outline-dark(href=`/task/submit/${task.id}` style="float: right") 제출하기
+                
+    else 
+      .card-group
+        .card.text-center.p-5
+          h5 존재하는 업무가 없습니다.

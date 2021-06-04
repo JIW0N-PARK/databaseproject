@@ -75,4 +75,63 @@ router.get('/employee/:project_no/:emp_no', catchErrors(async (req, res) => {
 
 }));
 
+// 업무 목록 페이지
+router.get('/list', catchErrors(async (req, res, next) => {
+	const tasks = await Task.findAll({
+		where: {
+			emp_no : req.session.user.emp_no
+		}
+	});
+
+	res.render('task/list', {type: 'personal', tasks : tasks});
+}));
+
+router.get('/list/all/:project_no', catchErrors(async (req, res, next) => {
+	const tasks = await Task.findAll({
+		where: {
+			project_no: req.params.project_no
+		}
+	});
+
+	res.render('task/list', {type: 'project', tasks : tasks});
+}));
+
+// 업무 확인 -> 상태 변경됨
+router.put('/check/:id', catchErrors(async (req, res, next) => {
+	const task = await Task.findOne({
+		where: {
+			id : req.params.id
+		}
+	});
+	task.current_state = 'progress';
+	await task.save();
+	req.flash('success', '정상적으로 상태 변경되었습니다.');
+	res.redirect('/');
+}));
+
+// 업무 제출 페이지
+router.get('/submit/:id', catchErrors(async (req, res, next) => {
+	const task = await Task.findOne({
+		where: {
+			id : req.params.id
+		}
+	});
+	res.render('task/submit', {task: task});
+}));
+
+// 업무 제출
+router.post('/submit/:id', catchErrors(async (req, res, next) => {
+	const task = await Task.findOne({
+		where: {
+			id : req.params.id
+		}
+	});
+	task.submit_url = req.body.url;
+	task.current_state = 'end';
+	await task.save();
+
+	req.flash('success', '정상적으로 제출되었습니다.');
+	res.redirect('/task/list');
+}));
+
 module.exports = router;

@@ -1,14 +1,18 @@
 var express = require("express");
 var router = express.Router();
+const Sequelize = require('sequelize');
+const catchErrors = require("../lib/async-error");
+var bcrypt = require("bcrypt");
 var Employee = require("../models/employee");
 var Skill = require("../models/skill");
 var EmpSkill = require("../models/emp_skill");
 var Project = require('../models/project');
-const catchErrors = require("../lib/async-error");
-var bcrypt = require("bcrypt");
 var Department = require("../models/department");
 const BestEmployee = require("../models/best_employee");
 const Customer = require("../models/customer");
+const Task = require("../models/task");
+
+const Op = Sequelize.Op;
 
 function generateHash(password) {
   return bcrypt.hash(password, 10);
@@ -22,6 +26,10 @@ function getMonth() {
 	let today = new Date();
 	let month = today.getMonth() + 1;
 	return month;
+}
+
+function getToday() {
+	return new Date();
 }
 
 function validateForm(form) {
@@ -108,6 +116,7 @@ router.route("/signin")
 				return res.redirect("/signin");
 			}
 
+			// 마감 프로젝트 알림
 			const projects = await Project.findAll({
 				where: {
 					state: '진행중'
@@ -130,6 +139,7 @@ router.route("/signin")
 				}
 			}
 
+			// 이달의 직원 알림
 			var currentMonth = getMonth();
 			const best = await BestEmployee.findAll({
 				where: {
@@ -143,12 +153,54 @@ router.route("/signin")
 						emp_no : emp.emp_no
 					}
 				});
-				req.flash("success", `'${employee.name}' 님이 이달(${currentMonth}월)의 직원으로 선정되었습니다 !`);
+				req.flash("success", `🎉'${employee.name}' 님이 이달(${currentMonth}월)의 직원으로 선정되었습니다!🎉`);
 			}
+
+			// PM일 때 업무 미제출 알림
+			const pm_project = await Project.findAll({
+				where: {
+					pm_no : user.emp_no
+				}
+			});
+
+			var taskList = [];
+			var today = getToday();
+			for(let project of pm_project) {
+				const tasks = await Task.findAll({
+					where: {
+						[Op.and] : [
+							{
+								end_date: {
+									[Op.lt]: today 
+								}
+							},
+							{
+								current_state: {
+									[Op.not]: 'end'
+								}
+							}
+						]
+					}
+				});
+				taskList.push(tasks);
+			}
+
+			for(let task of taskList[0]) {
+				const emp = await Employee.findOne({
+					where: task.emp_no
+				});
+
+				const project = await Project.findOne({
+					where: task.project_no
+				});
+
+				req.flash("danger", ` 😰'${project.project_name}' 프로젝트에서 '${task.title}' 업무를 부여 받은 '${emp.name}' 님이 업무 제출 기한이 지났지만 업무를 제출하지 않았습니다!😰 `);
+			}
+
 			
 			req.session.user = user;
 			req.session.authorization = user.authorization_no;
-			req.flash("secondary", `${user.name}님 환영합니다!`);
+			req.flash("secondary", `🤗 ${user.name}님 환영합니다! 🤗`);
 			return res.redirect("/");
 		})
 	);

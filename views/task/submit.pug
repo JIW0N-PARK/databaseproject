@@ -1,0 +1,24 @@
+extends ../layout 
+
+//- 업무 제출 페이지
+block content
+  .container
+    form(action=`/task/submit/${task.id}`, method="post")
+      h1.text-center.mt-5 업무 제출
+
+      .form-group
+        .row
+          .col.mt-4
+            h4 업무명
+            p= task.title
+        .row
+          .col.mt-4
+            h4 업무 내용
+            p= task.content
+        .row
+          .col.mt-4
+            h4 제출 URL
+            input.form-control(type="text", placeholder="https://github.com/JIW0N-PARK/databaseproject/commit/39df8574466a9cfd5442796b9235da5f7378cce5", name="url")
+        .row.justify-content-start.mt-4
+            .col(style="margin-bottom: 1em")
+            button.btn.btn-outline-dark(type="submit", style="float: right") 업무 제출하기

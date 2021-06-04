@@ -16,23 +16,25 @@ block content
               label(for="end") 종료 일자
               input.form-control(type="date", name="end" id="end")
             .form-group.col-md-2
-              a.btn.btn-outline-dark.btn-block(href=`/projects/list`) 모든 프로젝트 보기
+              a.btn.btn-outline-dark.btn-block(href=`/projects/list/all`) 모든 프로젝트 보기
               button.btn.btn-outline-dark.btn-block(type="submit") 검색 하기
 
     if(projects[0])
       each project in projects
         .card-group
-          .card.pt-3      
-            h4.project_name.mb-3= project.project_name
-            p.start_date= project.start_date
-            p.end_date= project.end_date
-            p.duty= project.duty
-            p.state= project.state
-            .d-grid.gap-2.mt-2
-              a.btn.btn-outline-dark(href=`/projects/details/${project.project_no}`) 상세 보기
-              a.btn.btn-outline-dark(href=`/projects/checkTask/${project.project_no}`) 진행 사항
-              if(authorization == 1)
-                a.btn.btn-outline-dark(href=`/projects/addTask/${project.project_no}`) 직원별 업무 부여하기
+          .card.pt-3  
+            .card-body    
+              h4.project_name.mb-3= project.project_name
+              p.start_date= project.start_date
+              p.end_date= project.end_date
+              p.duty= project.duty
+              p.state= project.state
+              .d-grid.gap-2.mt-2
+                a.btn.btn-outline-dark(href=`/projects/details/${project.project_no}`) 상세 보기
+                a.btn.btn-outline-dark(href=`/projects/checkTask/${project.project_no}`) 진행 사항
+                if(authorization == 1)
+                  a.btn.btn-outline-dark(href=`/projects/addTask/${project.project_no}`) 직원별 업무 부여하기
+                  a.btn.btn-outline-dark(href=`/task/list/all/${project.project_no}`) 업무 보기
     else 
       .card-group
         .card.text-center.p-5

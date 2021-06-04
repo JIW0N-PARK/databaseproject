@@ -61,7 +61,7 @@ typings/
 .next
 
 # Configuration directory
-# config/
+config/
 
 package-lock.json
 

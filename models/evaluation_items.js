@@ -34,7 +34,9 @@ module.exports = class Employee extends Sequelize.Model {
   }
 
   static associate(db) {
-    db.EvaluationItems.hasMany(db.EvaluationResult, { foreignKey: 'evaluation_item_no', sourceKey: 'evaluation_item_no'});
+    db.EvaluationItems.hasMany(db.PMEvaluationResult, { foreignKey: 'evaluation_item_no', sourceKey: 'evaluation_item_no'});
+    db.EvaluationItems.hasMany(db.PeerEvaluationResult, { foreignKey: 'evaluation_item_no', sourceKey: 'evaluation_item_no'});
+    db.EvaluationItems.hasMany(db.CustomerEvaluationResult, { foreignKey: 'evaluation_item_no', sourceKey: 'evaluation_item_no'});
     
   }
 };

@@ -2,7 +2,7 @@ extends ../layout
 
 block content 
   .container 
-    h1.mb-5.d-flex.justify-content-center 프로젝트
+    h1.mb-5.mt-5.d-flex.justify-content-center 프로젝트
     .row.mb-5
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
@@ -11,7 +11,7 @@ block content
             h6.card-subtitle.mb-4.text-muted Register Project
             p.card-text 새로운 프로젝트를 등록할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/management/project/register') 프로젝트 등록하기
+              a.btn.btn-outline-dark(href='/management/project/register') 프로젝트 등록하기
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
@@ -19,14 +19,14 @@ block content
             h6.card-subtitle.mb-4.text-muted View Projects
             p.card-text 모든 프로젝트를 조회할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/projects/list') 프로젝트 조회하기
+              a.btn.btn-outline-dark(href='/projects/list') 프로젝트 조회하기
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
             h5.card-title.mb-3 종료된 프로젝트 확인하기
-            h6.card-subtitle.mb-4.text-muted Finish Projects
+            h6.card-subtitle.mb-4.text-muted Check Projects
             p.card-text 종료된 프로젝트를 확인하고 인증키를 부여받는 페이지로 이동합니다.
-            .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/projects/finish') 종료된 프로젝트 확인하기
+            .d-grid.gap-2.mt-4
+              a.btn.btn-outline-dark(href='/projects/finish') 종료된 프로젝트 확인하기
       
     

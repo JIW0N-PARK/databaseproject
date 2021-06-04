@@ -5,26 +5,58 @@ block content
     .evaluationView
       .row
         h3= `${type} 평가`
-      form#peer_evaluation_form(action="/", method='post')
-        br 
-        .row  
-          .col 
-              h3.mb-3.ml-3 평가 프로젝트
-              //- input.form-control(type="text" name="project" value=`project_name` readonly)
-              select#project.form-select(name="project" size="1")
-          .col
-              h3.mb-3.ml-3 평가 직원
-              //- input.form-control(type="text" name="employee" value=`employee_name` readonly)
-              select.form-control(name="non_evaluator", size="1")
-                each participation in participations
-                  if(participation.emp_no != currentUser.emp_no)
-                    option(value=`${participation.emp_no}`)= participation.emp_no
-        br
-        each item in items
-          .form-group
-              label(for="inputWorkScore")= item.item_title
-              input#inputworkscore.form-control(type="number" name=`${item.evaluation_item_no}_score` min="0" max="100" placeholder="0~100점")
-          .form-group
-              label(for="inputWorkContent")= `${item.item_title} 세부 내용`
-              input#inputworkcontent.form-control(type="text" name=`${item.evaluation_item_no}_content` placeholder=`${item.item_example}`)
-        button.signinButton(type="submit") 평가 등록
+      if(currentUser)
+        form(action=`/eval/evaluate/${project.project_no}`, method='post')
+          br 
+          .row  
+            .col 
+                h3.mb-3.ml-3 평가 프로젝트
+                //- input.form-control(type="text" name="project" value=`project_name` readonly)
+                select.form-control(name="project" size="1" disabled)
+                  option= project.project_name
+            .col
+                h3.mb-3.ml-3 평가 직원
+                //- input.form-control(type="text" name="employee" value=`employee_name` readonly)
+                select.form-control(name="non_evaluator", size="1")
+                  each participation in participations
+                    if(participation.emp_no != currentUser.emp_no)
+                      if(evaluated.includes(participation.emp_no))
+                        option(value=`${participation.emp_no}` disabled)= participation.name
+                      else
+                        option(value=`${participation.emp_no}`)= participation.name
+          br
+          each item in items
+            .form-group
+                label(for="inputWorkScore")= item.item_title
+                input#inputworkscore.form-control(type="number" name=`score_${item.evaluation_item_no}` min="0" max="100" placeholder="0~100점" required)
+            .form-group
+                label(for="inputWorkContent")= `${item.item_title} 세부 내용`
+                input#inputworkcontent.form-control(type="text" name=`content_${item.evaluation_item_no}` placeholder=`${item.item_example}` required)
+          button.signinButton.mb-5(type="submit") 평가 등록
+      else 
+        form(action=`/customer/eval/evaluate/${project.project_no}`, method='post')
+          br 
+          .row  
+            .col 
+                h3.mb-3.ml-3 평가 프로젝트
+                //- input.form-control(type="text" name="project" value=`project_name` readonly)
+                select.form-control(name="project" size="1" disabled)
+                  option= project.project_name
+            .col
+                h3.mb-3.ml-3 평가 직원
+                //- input.form-control(type="text" name="employee" value=`employee_name` readonly)
+                select.form-control(name="non_evaluator", size="1")
+                  each participation in participations
+                    if(evaluated.includes(participation.emp_no))
+                      option(value=`${participation.emp_no}` disabled)= participation.name
+                    else
+                      option(value=`${participation.emp_no}`)= participation.name
+          br
+          each item in items
+            .form-group
+                label(for="inputWorkScore")= item.item_title
+                input#inputworkscore.form-control(type="number" name=`score_${item.evaluation_item_no}` min="0" max="100" placeholder="0~100점" required)
+            .form-group
+                label(for="inputWorkContent")= `${item.item_title} 세부 내용`
+                input#inputworkcontent.form-control(type="text" name=`content_${item.evaluation_item_no}` placeholder=`${item.item_example}` required)
+          button.signinButton.mb-5(type="submit") 평가 등록

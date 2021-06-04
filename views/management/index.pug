@@ -2,7 +2,7 @@ extends ../layout
 
 block content 
   .container 
-    h1.mb-5.d-flex.justify-content-center 관리
+    h1.mt-5.mb-5.d-flex.justify-content-center 관리
     .row.mb-5
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
@@ -11,7 +11,7 @@ block content
             h6.card-subtitle.mb-4.text-muted View Employee
             p.card-text 직원들에 대한 정보를 확인할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/employee/inquiry') 직원 정보 확인하기
+              a.btn.btn-outline-dark(href='/employee/inquiry') 직원 정보 확인하기
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
@@ -19,7 +19,7 @@ block content
             h6.card-subtitle.mb-4.text-muted Register Customer
             p.card-text 새로운 거래처를 등록할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/management/customer/register') 거래처 등록하기
+              a.btn.btn-outline-dark(href='/management/customer/register') 거래처 등록하기
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
@@ -27,5 +27,5 @@ block content
             h6.card-subtitle.mb-4.text-muted View Customers
             p.card-text 모든 거래처를 조회할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/management/customer/list') 거래처 조회하기
+              a.btn.btn-outline-dark(href='/management/customer/list') 거래처 조회하기
     

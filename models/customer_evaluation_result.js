@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 
-module.exports = class EvaluationResult extends Sequelize.Model {
+module.exports = class CustomerEvaluationResult extends Sequelize.Model {
   static init(sequelize) {
     return super.init({
       evaluation_result_no: {
@@ -9,7 +9,7 @@ module.exports = class EvaluationResult extends Sequelize.Model {
         autoIncrement: true,
         primaryKey: true,
       },
-      evaluator_emp_no: {
+      customer_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
@@ -37,8 +37,8 @@ module.exports = class EvaluationResult extends Sequelize.Model {
       sequelize,
       timestamps: false,
       underscored: false,
-      modelName: 'EvaluationResult',
-      tableName: 'evaluation_result',
+      modelName: 'CustomerEvaluationResult',
+      tableName: 'customer_evaluation_result',
       paranoid: false,
       charset: 'utf8',
       collate: 'utf8_general_ci',
@@ -46,14 +46,14 @@ module.exports = class EvaluationResult extends Sequelize.Model {
   }
 
   static associate(db) {
-    db.EvaluationItems.hasMany(db.EvaluationResult, { foreignKey: 'evaluation_item_no', sourceKey: 'evaluation_item_no'});
+    db.EvaluationItems.hasMany(db.CustomerEvaluationResult, { foreignKey: 'evaluation_item_no', sourceKey: 'evaluation_item_no'});
 
     // Employee Model과 연결
-    db.EvaluationResult.belongsTo(db.Employee, { foreignKey: 'evaluator_emp_no', targetKey: 'emp_no'});
-    db.EvaluationResult.belongsTo(db.Employee, { foreignKey: 'non_evaluator_emp_no', targetKey: 'emp_no'});
+    db.CustomerEvaluationResult.belongsTo(db.Employee, { foreignKey: 'evaluator_emp_no', targetKey: 'emp_no'});
+    db.CustomerEvaluationResult.belongsTo(db.Employee, { foreignKey: 'non_evaluator_emp_no', targetKey: 'emp_no'});
 
     // Project Model과 연결
-    db.EvaluationResult.belongsTo(db.Project, { foreignKey: 'project_no', targetKey: 'project_no'});
+    db.CustomerEvaluationResult.belongsTo(db.Project, { foreignKey: 'project_no', targetKey: 'project_no'});
     
   }
 };

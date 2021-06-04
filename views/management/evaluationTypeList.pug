@@ -2,29 +2,29 @@ extends ../layout
 
 block content 
   .container 
-    h1.mb-5.d-flex.justify-content-center  평가 항목 관리
+    h1.mb-5.mt-5.d-flex.justify-content-center  평가 항목 관리
     .row.mb-5
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
             h5.card-title.mb-3 동료 평가 항목 관리
-            h6.card-subtitle.mb-4.text-muted Register Project
-            p.card-text 새로운 프로젝트를 등록할 수 있는 페이지로 이동합니다.
+            h6.card-subtitle.mb-4.text-muted Manage Peer Evaluation Items
+            p.card-text 동료 평가 항목을 관리할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/management/evaluation/peer/manage') 동료 평가 항목 관리하기
+              a.btn.btn-outline-dark(href='/eval/manage/peer') 동료 평가 항목 관리하기
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
             h5.card-title.mb-3 PM 평가 항목 관리
-            h6.card-subtitle.mb-4.text-muted Register Customer
-            p.card-text 새로운 거래처를 등록할 수 있는 페이지로 이동합니다.
+            h6.card-subtitle.mb-4.text-muted Manage PM Evaluation Items
+            p.card-text PM 평가 항목을 관리할 수 있는 페이지로 이동합니다.
             .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/management/evaluation/pm/manage') PM 평가 항목 관리하기
+              a.btn.btn-outline-dark(href='/eval/manage/pm') PM 평가 항목 관리하기
       .col.d-flex.justify-content-center 
         .card(style="width: 18rem;")
           .card-body
             h5.card-title.mb-3 고객 평가 항목 관리
-            h6.card-subtitle.mb-4.text-muted Register Evaluation Contents
-            p.card-text 새로운 평가 항목을 등록할 수 있는 페이지로 이동합니다.
-            .d-grid.gap-2.mt-5
-              a.btn.btn-outline-success(href='/management/evaluation/customer/manage') 고객 평가 항목 관리하기
+            h6.card-subtitle.mb-4.text-muted Manage Customer Evaluation Items
+            p.card-text 고객 평가 항목을 관리할 수 있는 페이지로 이동합니다.
+            .d-grid.gap-2.mt-4
+              a.btn.btn-outline-dark(href='/eval/manage/customer') 고객 평가 항목 관리하기

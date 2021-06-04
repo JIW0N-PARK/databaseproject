@@ -3,40 +3,40 @@ extends ../layout
 //- 종료된 프로젝트 리스트
 block content
   .container 
-    h1.text-center-mt-5 종료된 프로젝트
+    h1.text-center.mt-5 종료된 프로젝트
 
-    if(end_state_projects)
+    if(end_state_projects[0])
       for project in end_state_projects
         form#grantKeyForm(action="/", method="post")
           .card-group
             .card.mb-3
               .card-body 
                 h5 프로젝트명
-                p#project_name= project.project_name
+                p.mb-5#project_name= project.project_name
                 h5 프로젝트 번호
-                p#project_no= project.project_no
-                h6 프로젝트 시작 날짜
-                p#start_date= project.start_date               
-                h6 프로젝트 종료 날짜
-                p#end_date= project.end_date
-                h6 상태
-                p#state= project.state
-                h6 고객 번호
-                p#customer_id= project.customer_id
-                h6 담당자
-                p#PM= project.pm_no
+                p.mb-5#project_no= project.project_no
+                h5 프로젝트 시작 날짜
+                p.mb-5#start_date= project.start_date               
+                h5 프로젝트 종료 날짜
+                p.mb-5#end_date= project.end_date
+                h5 상태
+                p.mb-5#state= project.state
+                h5 고객 번호
+                p.mb-5#customer_id= project.customer_id
+                h5 PM 사번
+                p.mb-5#PM= project.pm_no
                 button.btn.btn-outline-dark(type="submit" style="float: right") 인증키 부여
     else 
       .card-group
         .card.mb-3
-          .card-body 
+          .card-body.text-center 
             h5 종료된 프로젝트가 없습니다.
 
 
-    hr(style="border-top:3px solid #F12121")
+    hr(style="border-top:3px solid #FFFFFF")
 
-    h2 마감일자가 지난 프로젝트
-    if(end_date_projects)
+    h1.text-center.mt-5 마감일자가 지난 프로젝트
+    if(end_date_projects[0])
       for project in end_date_projects
         form(action=`/management/project/state/end/${project.project_no}`, method="post")
           .card-group
@@ -52,13 +52,13 @@ block content
                 p.end_date= project.end_date
                 h6 상태
                 p.state= project.state
-                h6 담당자(사번)
+                h6 PM 사번
                 p.PM= project.pm_no
                 button.btn.btn-outline-danger(type="submit" style="float: right" id="finish") 종료하기
     else 
       .card-group
         .card.mb-3
-          .card-body 
+          .card-body.text-center
             h5 마감일자가 지난 프로젝트가 없습니다.
 
 

@@ -2,28 +2,36 @@ header
   nav.navbar.static-top.navbar-expand-lg.navbar-dark(style="background-color: #3a3a3a;")
     .container-lg
       a.navbar-brand(href="/") Prompt Solution
-      if(authorization == 0)  
+      if(currentCustomer)
         #navbarNav.collapse.navbar-collapse
           ul.navbar-nav.ms-auto
             li.nav-item.me-3
-              button.menuNav(type='button' onclick="location.href='/projects/list' ") 프로젝트
-            li.nav-item.me-3
-              button.menuNav(type='button' onclick="location.href='/evaluation/inquiry' ") 평가
-            li.nav-item.me-3
-              button.menuNav(type='button' onclick="location.href='/mypage' ") 마이페이지    
+              button.menuNav(type='button' onclick="location.href='/customer/eval/list' ") 평가    
             li.nav-item
               button.loginNav(type='button' onclick="location.href='/signout' ") 로그아웃
+      else
+        if(authorization == 0)  
+          #navbarNav.collapse.navbar-collapse
+            ul.navbar-nav.ms-auto
+              li.nav-item.me-3
+                button.menuNav(type='button' onclick="location.href='/projects/list' ") 프로젝트
+              li.nav-item.me-3
+                button.menuNav(type='button' onclick="location.href='/eval/list' ") 평가
+              li.nav-item.me-3
+                button.menuNav(type='button' onclick="location.href='/mypage' ") 마이페이지    
+              li.nav-item
+                button.loginNav(type='button' onclick="location.href='/signout' ") 로그아웃
 
-      else 
-        #navbarNav.collapse.navbar-collapse
-          ul.navbar-nav.ms-auto
-            li.nav-item.me-3
-              button.menuNav(type='button' onclick="location.href='/projects/index' ") 프로젝트
-            li.nav-item.me-3
-              button.menuNav(type='button' onclick="location.href='/evaluation/index' ") 평가
-            li.nav-item.me-3
-              button.menuNav(type='button' onclick="location.href='/mypage' ") 마이페이지
-            li.nav-item.me-3
-              button.menuNav(type='button' onclick="location.href='/management' ") 관리
-            li.nav-item
-              button.loginNav(type='button' onclick="location.href='/signout' ") 로그아웃
+        else 
+          #navbarNav.collapse.navbar-collapse
+            ul.navbar-nav.ms-auto
+              li.nav-item.me-3
+                button.menuNav(type='button' onclick="location.href='/projects/index' ") 프로젝트
+              li.nav-item.me-3
+                button.menuNav(type='button' onclick="location.href='/evaluation/index' ") 평가
+              li.nav-item.me-3
+                button.menuNav(type='button' onclick="location.href='/mypage' ") 마이페이지
+              li.nav-item.me-3
+                button.menuNav(type='button' onclick="location.href='/management' ") 관리
+              li.nav-item
+                button.loginNav(type='button' onclick="location.href='/signout' ") 로그아웃

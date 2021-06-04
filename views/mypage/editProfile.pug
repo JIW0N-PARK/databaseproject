@@ -1,0 +1,53 @@
+extends ../layout
+
+//- 마이 페이지
+block content
+	form(action=`/mypage/${employee.emp_no}?_method=PUT`, method="POST")
+		.mypageView.mt-5
+			.row.mb-5
+				.col
+					h3 개인정보 수정하기
+			.row.mb-3
+				.col
+					h5 이름
+				.col
+					input.mypageInput(type="text", name="name", value=`${employee.name}` required)
+			.row.mb-3
+				.col
+					h5 아이디
+				.col
+					input.mypageInput(type="text", name="id",value=`${employee.ID}`, disabled)
+									
+			.row.mb-3
+				.col
+					h5 비밀번호
+				.col
+					input.mypageInput(type="password", name="password" placeholder=`${employee.PWD}` required)
+			.row.mb-3
+				.col
+					h5 최종 학력
+				.col
+					select#inputState.form-select(name="education" size="1" required)
+						option(value='high-school') 고졸
+						option(value='college') 대졸
+						option(value='master') 석사
+						option(value='ph-d') 박사
+			.row.mb-3
+				.col 
+					h5.mb-3 skill 
+					.form-group 
+							each skill in skills
+								if(emp_skill.includes(skill.skill_no))
+									.form-check.form-check-inline
+										input.form-check-input(type='checkbox', id=`inlineCheckbox${skill.skill_no}`, name='skills' , value=`${skill.skill_no}`, checked)
+										label.form-check-label(for=`inlineCheckbox${skill.skill_no}`)= skill.skill_name
+								else 
+									.form-check.form-check-inline
+										input.form-check-input(type='checkbox', id=`inlineCheckbox${skill.skill_no}`, name='skills' , value=`${skill.skill_no}`)
+										label.form-check-label(for=`inlineCheckbox${skill.skill_no}`)= skill.skill_name
+			
+			.row    
+				.col
+					button.loginButton(type="submit") 수정완료
+					//- button.loginButton(type='button' onclick="location.href='/mypage/delete' ") 회원탈퇴
+			br

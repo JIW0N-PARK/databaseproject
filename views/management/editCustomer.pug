@@ -3,7 +3,7 @@ extends ../layout
 //- 거래처 추가 페이지
 block content
   .container
-    form(action=`/management/customer/edit/${customer.customer_id}`, method="POST")
+    form(action=`/management/customer/${customer.customer_id}?_method=PUT`, method="POST")
       h1.text-center.mt-5 거래처 수정
 
       .form-group

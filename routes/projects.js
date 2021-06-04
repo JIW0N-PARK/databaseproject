@@ -1,19 +1,27 @@
 var express = require('express');
+var router = express.Router();
+const Sequelize = require('sequelize');
 var Participation = require('../models/participation');
 var Project = require('../models/project');
 var Customer = require('../models/customer');
 var Employee = require('../models/employee');
 var EmpSkill = require('../models/emp_skill');
 var Task = require('../models/task');
-const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const nodemailer = require('nodemailer');
 const smtpTransport = require('nodemailer-smtp-transport');
-
 const catchErrors = require('../lib/async-error');
-var router = express.Router();
 
-// 경영진 권한에게 프로젝트 페이지를 보여줌. -> index.pug
+function isValidDate(start, end) {
+  var start_date = new Date(start);
+  var end_date = new Date(end);
+  if(start_date > end_date){
+    return false;
+  }
+  return true;
+}
+
+// 경영진 권한에게 프로젝트 페이지를 보여줌.
 router.get('/index', catchErrors(async (req, res, next) => {
   res.render('project/index');
 }));
@@ -325,6 +333,33 @@ router.get("/finish", catchErrors(async (req, res, next) => {
     }
   });
   res.render("project/finish", { end_state_projects: end_state_projects, end_date_projects: end_date_projects });
+}));
+
+router.post("/search", catchErrors(async (req, res, next) => {
+  if(!isValidDate(req.body.start, req.body.end)){
+    req.flash('danger', '시작 일자가 종료 일자보다 앞설 수 없습니다.');
+    return res.redirect('/projects/list');
+  }
+
+  const projects = await Project.findAll({
+    where: {
+      [Op.or] : [
+        {
+          end_date: {
+            [Op.gte]: req.body.start,
+            [Op.lte]: req.body.end
+          }
+        },
+        {
+          start_date: {
+            [Op.lte]: req.body.end
+          }
+        }
+      ]
+    }
+  });
+
+  res.render("project/list", { projects: projects });
 }));
 
 async function getEmployeesWithSkill(skillList) {

@@ -4,7 +4,7 @@ extends ../layout
 block content
   .container 
     form(action="#")
-      h1.text-center-mt-5 Project Details
+      h1.text-center.mt-5 프로젝트 상세 보기
 
       div.card-group 
         .card
@@ -32,7 +32,7 @@ block content
             if(authorization == 1)
               a.btn.btn-outline-dark(href=`/management/proejct/${project_info.project_no}/edit`) 프로젝트 수정</a>
               a.btn.btn-outline-dark(href=`/management/project/${project_info.project_no}/delete`) 프로젝트 삭제</a>
-            <a href="list" class="btn btn-outline-dark">List로 돌아가기</a>
+            a(href="/projects/list" class="btn btn-outline-dark" style="float: right") List로 돌아가기
             
       script(src='https://unpkg.com/axios/dist/axios.min.js')
       script(src='/gantt.js')

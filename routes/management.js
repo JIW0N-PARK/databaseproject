@@ -10,6 +10,15 @@ const catchErrors = require("../lib/async-error");
 
 const Op = Sequelize.Op;
 
+function isValidDate(start, end) {
+  var start_date = new Date(start);
+  var end_date = new Date(end);
+  if(start_date > end_date){
+    return false;
+  }
+  return true;
+}
+
 router.get('/', function (req, res, next) {
   res.render('management/index',{});
 });
@@ -34,10 +43,10 @@ router.post('/customer/register', catchErrors(async (req, res, next) => {
 
 router.get('/project/register', catchErrors(async (req, res, next) => {
   const customers = await Customer.findAll();
-  const marketing = await Employee.findAll({ where: { dept_no: 2 } });
-  const research = await Employee.findAll({ where: { dept_no: 3 } });
-  const business = await Employee.findAll({ where: { dept_no: 4 } });
-  const development = await Employee.findAll({ where: { dept_no: 5 } });
+  const marketing = await Employee.findAll({ where: { dept_no: 1 } });
+  const research = await Employee.findAll({ where: { dept_no: 2 } });
+  const business = await Employee.findAll({ where: { dept_no: 3 } });
+  const development = await Employee.findAll({ where: { dept_no: 4 } });
   const employees = await Employee.findAll({ where: { authorization_no: 1 } });
   res.render('management/registerProject', { 
     customers: customers, marketing: marketing, 
@@ -45,10 +54,11 @@ router.get('/project/register', catchErrors(async (req, res, next) => {
 }));
 
 router.post('/project/register', catchErrors(async (req, res, next) => {
-  //새로운 프로젝트를 생성하면서 동시에 participation 생성해야함.
 
-  console.log(req.body);
-
+  if(!isValidDate(req.body.start, req.body.end)){
+    req.flash('danger', '시작 일자가 종료 일자보다 앞설 수 없습니다.');
+    return res.redirect('/projects/index');
+  }
   const project = await Project.create({
     project_name: req.body.name,
     start_date: req.body.start,
@@ -74,10 +84,10 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
 
 router.get('/project/edit/:project_no', catchErrors(async (req, res, next) => {
   const customers = await Customer.findAll();
-  const marketing = await Employee.findAll({ where: { dept_no: 2 } });
-  const research = await Employee.findAll({ where: { dept_no: 3 } });
-  const business = await Employee.findAll({ where: { dept_no: 4 } });
-  const development = await Employee.findAll({ where: { dept_no: 5 } });
+  const marketing = await Employee.findAll({ where: { dept_no: 1 } });
+  const research = await Employee.findAll({ where: { dept_no: 2 } });
+  const business = await Employee.findAll({ where: { dept_no: 3 } });
+  const development = await Employee.findAll({ where: { dept_no: 4 } });
   const project = await Project.findOne({
     where: { project_no: req.params.project_no },
     include: [
@@ -242,13 +252,13 @@ router.post('/project/state/end/:project_no', catchErrors(async (req, res, next)
   res.redirect('back');
 }));
 
-router.get('/customer/edit/:id', catchErrors(async (req, res, next) => {
+router.get('/customer/:id/edit', catchErrors(async (req, res, next) => {
   const customer = await Customer.findOne({ where: { customer_id: req.params.id}});
   res.render('management/editCustomer', { customer: customer });
 }));
 
 //put
-router.post('/customer/edit/:id', catchErrors(async (req, res, next) => {
+router.put('/customer/:id', catchErrors(async (req, res, next) => {
   const customer = await Customer.findOne({ where: { customer_id: req.params.id}});
   customer.customer_name = req.body.name;
   customer.e_mail = req.body.email;
@@ -257,7 +267,7 @@ router.post('/customer/edit/:id', catchErrors(async (req, res, next) => {
   res.render('management/index');
 }));
 
-router.get('/customer/delete/:id', catchErrors(async (req, res, next) => {
+router.delete('/customer/:id', catchErrors(async (req, res, next) => {
   const customer = await Customer.findOne({ where: { customer_id: req.params.id}});
   await customer.destroy();
   req.flash('success', "성공적으로 삭제되었습니다.");

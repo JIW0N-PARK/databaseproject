@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 var flash = require('connect-flash');
+var methodOverride = require('method-override');
 
 //Import Model
 const { sequelize } = require('./models');
@@ -19,9 +20,9 @@ var pmEvaluationRouter = require('./routes/pm_evaluation');
 var peerEvaluationRouter = require('./routes/peer_evaluation');
 var managementRouter = require('./routes/management');
 var taskRouter = require('./routes/task');
-var mypageRouter = require('./routes/mypage');
 var evalRouter = require('./routes/eval');
 var employeeRouter = require('./routes/employee');
+var customerRouter = require('./routes/customer');
 
 // Use express
 var app = express();
@@ -54,6 +55,9 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(methodOverride('_method', {methods: ['POST', 'GET']}));
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'front')));
 app.use(session({
@@ -70,6 +74,7 @@ app.use(flash());
 app.use(function(req, res, next) {
   res.locals.currentUser = req.session.user;
   res.locals.authorization = req.session.authorization;
+  res.locals.currentCustomer = req.session.customer;
   res.locals.flashMessages = req.flash();
   next();
 });
@@ -83,9 +88,9 @@ app.use('/pm_evaluation', pmEvaluationRouter);
 app.use('/evaluation', evaluationRouter);
 app.use('/management', managementRouter);
 app.use('/task', taskRouter);
-app.use('/mypage', mypageRouter);
 app.use('/eval', evalRouter);
 app.use('/employee', employeeRouter);
+app.use('/customer', customerRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

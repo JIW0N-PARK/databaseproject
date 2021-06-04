@@ -2,11 +2,20 @@ extends ../layout
 
 block content 
   .container 
-    h1.mb-5.d-flex.justify-content-center 평가 리스트
-    each project in projects
-      .row 
-        .card
-          .card-body
-            h3.card-title.mb-3.d-flex.justify-content-center= project.project_name
-            .d-grid.gap-2.mt-2
-              a.btn.btn-outline-primary(href=`/eval/evaluate/${project.project_no}`) 평가하기
+    h1.text-center.mt-5 평가 리스트
+
+    if(projects[0])
+      each project in projects
+        .card-group
+          .card
+            .card-body
+              h3.card-title.mb-3.d-flex.justify-content-center= project.project_name
+              .d-grid.gap-2.mt-2
+                if(currentUser)
+                  a.btn.btn-outline-dark(href=`/eval/evaluate/${project.project_no}`) 평가하기
+                else 
+                  a.btn.btn-outline-dark(href=`/customer/eval/evaluate/${project.project_no}`) 평가하기
+    else 
+      .card-group
+        .card.text-center.p-5
+          h5 평가 가능한 프로젝트가 없습니다.

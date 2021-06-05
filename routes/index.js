@@ -71,13 +71,12 @@ function getDday(end) {
 	let day = today.getDate();  // 날짜
 
 	var endArray = end.toString().split(" ");
-	var end_date = endArray[0];
-	var dateArray = end_date.split("-");
+	var end_date = parseInt(endArray[2]);
 
-	if(year == dateArray[0]) {
-		if(month == dateArray[1]) {
-			if(dateArray[2] - day <= 7) {
-				return dateArray[2] - day;
+	if(year == endArray[3]) {
+		if(month == 6) {
+			if(end_date - day <= 7) {
+				return end_date - day;
 			}
 		}
 	}
@@ -126,14 +125,15 @@ router.route("/signin")
 						model: Employee,
 						as: 'project_emp',
 						through: {
-								where: { emp_no: user.emp_no }
+							where: { emp_no: user.emp_no }
 						}
 					}
 				]
 			}); 
 
 			for(let project of projects) {
-				var d_day = getDday(project.dataValues.end_date);
+				var d_day = getDday(project.end_date);
+				console.log(d_day);
 				if(d_day) {
 					req.flash("warning", `${project.project_name} 프로젝트의 마감일자까지 ${d_day}일 남았습니다.`);
 				}

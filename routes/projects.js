@@ -198,6 +198,27 @@ router.post('/addTask', catchErrors(async (req, res) => {
     project_no,
   });
 
+  const participation = await Participation.findOne({
+    where: {
+      emp_no: emp_no,
+      project_no: project_no
+    }
+  });
+
+  if(!participation) {
+    const new_participation = await Participation.create({
+      emp_no: emp_no,
+      project_no: project_no,
+      participation_date: start_date,
+      participate: 'Y'
+    });
+  }
+  else if(participation.participate == 'N'){
+    participation.participate = 'Y';
+    await participation.save();
+  }
+
+
   if(task != null) {
     return res.send('true');
   } else {

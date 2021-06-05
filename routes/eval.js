@@ -194,7 +194,11 @@ router.delete('/manage/:evaluation_item_no', catchErrors(async (req, res, next) 
 router.get('/result', catchErrors(async (req, res, next) => {
   var allEvaluationList = [];
   //모든 프로젝트에 참여자
-  const participations = await Participation.findAll({});
+  const participations = await Participation.findAll({
+    where: {
+      participate: 'Y'
+    }
+  });
 
   //각각의 프로젝트 참여자에 대한 list 생성
   for(let i=0; i<participations.length; i++) {
@@ -312,7 +316,11 @@ router.post('/result/', catchErrors(async (req, res, next) => {
   if(req.body.type == 'all') {
     var allEvaluationList = [];
     //모든 프로젝트에 참여자
-    const participations = await Participation.findAll({});
+    const participations = await Participation.findAll({
+      where: {
+        participate: 'Y'
+      }
+    });
 
     //각각의 프로젝트 참여자에 대한 list 생성
     for(let i=0; i<participations.length; i++) {
@@ -444,7 +452,8 @@ router.post('/result/', catchErrors(async (req, res, next) => {
     for(let employee of employees) {
       const participation = await Participation.findAll({
         where : {
-          emp_no : employee.emp_no
+          emp_no : employee.emp_no,
+          participate: 'Y'
         }
       });
       participations.push(participation);
@@ -568,6 +577,7 @@ router.post('/result/', catchErrors(async (req, res, next) => {
     const participations = await Participation.findAll({
         where: {
             emp_no: req.body.search,
+            participate: 'Y'
         }
     });
 
@@ -689,7 +699,8 @@ router.post('/result/', catchErrors(async (req, res, next) => {
     //모든 프로젝트에 참여자
     const participations = await Participation.findAll({
         where : {
-            project_no : req.body.search
+          project_no : req.body.search,
+          participate: 'Y'
         }
     });
 

@@ -88,7 +88,7 @@ router.post('/project/register', catchErrors(async (req, res, next) => {
   }
 
   req.flash('success', '정상적으로 등록되었습니다.');
-  res.redirect('/management/projects/index');
+  res.redirect('/projects/index');
 }));
 
 router.get('/project/:project_no/edit', catchErrors(async (req, res, next) => {
@@ -150,6 +150,14 @@ router.put('/project/:project_no', catchErrors(async (req, res, next) => {
       });
     }
   }
+
+  const pm_participation = await Participation.findOne({
+    where: { emp_no: project.pm_no, project_no: req.params.project_no }
+  });
+
+  pm_participation.participate = 'Y';
+  await pm_participation.save();
+
   req.flash("success", "성공적으로 수정되었습니다.");
   res.redirect('/projects/list');
 }));

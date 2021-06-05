@@ -196,7 +196,8 @@ router.get('/result', catchErrors(async (req, res, next) => {
   //모든 프로젝트에 참여자
   const participations = await Participation.findAll({
     where: {
-      participate: 'Y'
+      participate: 'Y',
+      project_no: 9
     }
   });
 
@@ -318,7 +319,8 @@ router.post('/result/', catchErrors(async (req, res, next) => {
     //모든 프로젝트에 참여자
     const participations = await Participation.findAll({
       where: {
-        participate: 'Y'
+        participate: 'Y',
+        project_no: 9
       }
     });
 
